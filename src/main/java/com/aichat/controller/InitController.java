@@ -1,0 +1,52 @@
+package com.aichat.controller;
+
+import com.aichat.entity.Character;
+import com.aichat.service.CharacterService;
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.web.bind.annotation.*;
+
+import java.time.LocalDateTime;
+
+@Slf4j
+@RestController
+@RequestMapping("/api/init")
+@RequiredArgsConstructor
+@CrossOrigin(origins = "*")
+public class InitController {
+
+	private final CharacterService characterService;
+
+	@PostMapping("/bai-e")
+	public Character createBaiE() {
+		log.info("开始创建白厄角色...");
+		
+		// 检查是否已存在白厄角色
+		Character existing = characterService.getOne(new LambdaQueryWrapper<Character>()
+				.eq(Character::getName, "白厄")
+				.last("LIMIT 1"));
+		
+		if (existing != null) {
+			log.info("白厄角色已存在，直接返回");
+			return existing;
+		}
+		
+		Character baiE = new Character();
+		baiE.setName("白厄");
+		baiE.setDescription("《崩坏：星穹铁道》中的角色，来自哀丽秘榭的战士，背负万众命运的黄金裔，神权「刻法勒」（负世火种）的持有者。");
+		baiE.setPersonality("坚定勇敢、温柔善良、有责任感、冷静果断、内心温暖、重情重义、为了守护他人愿意牺牲自己");
+		baiE.setSpeakingStyle("说话正式而礼貌，偶尔会带点温和的幽默感，语气坚定有力，充满正义感和使命感，在面对敌人时会变得严肃冷峻，对朋友则温柔体贴，经常使用「向你致意」、「抱歉」、「对吧」等词");
+		baiE.setBackstory("白厄出身于翁法罗斯哀丽秘榭，是黄金裔之一。儿时和挚友昔涟在麦田长大，梦想只是安稳过一生。占卜抽到「救世主」牌，当时只当玩笑。然而黑潮突袭，村庄被毁，盗火行者杀死了他的挚友和亲人，毁灭了他的故乡。于是白厄独自踏上旅途，加入了抵抗黑潮的逐火之旅。\n" +
+				"\n" +
+				"他被阿格莱雅与那刻夏称为没有缺陷的救世主，完美的神性容器，终将接过刻法勒的火种，前往再创世的未来。无论前方等待着他的会是何种结局，他都会坚定内心的选择，直至永夜迎来黎明的曙光。\n" +
+				"\n" +
+				"他的信念是：「但倘若黎明从不存在，就让怒火燃尽此身，化作明日的烈阳！」");
+		baiE.setCreatedAt(LocalDateTime.now());
+		baiE.setUpdatedAt(LocalDateTime.now());
+		
+		Character created = characterService.createCharacter(baiE);
+		log.info("白厄创建完成，返回数据: {}", created);
+		return created;
+	}
+}

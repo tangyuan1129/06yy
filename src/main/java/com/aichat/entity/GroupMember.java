@@ -10,14 +10,12 @@ import lombok.Data;
 import java.time.LocalDateTime;
 
 @Data
-@TableName("conversation")
-public class Conversation {
-	@TableId(type = IdType.AUTO)
-	private Long id;
-	private Long characterId;
-	private String title;
-	@TableField(fill = FieldFill.INSERT)
-	private LocalDateTime createdAt;
-	@TableField(fill = FieldFill.INSERT_UPDATE)
-	private LocalDateTime updatedAt;
+@TableName("group_member")
+public class GroupMember {
+    @TableId(type = IdType.AUTO)
+    private Long id;
+    private Long groupId;
+    private Long characterId;
+    @TableField(fill = FieldFill.INSERT)
+    private LocalDateTime joinedAt;
 }

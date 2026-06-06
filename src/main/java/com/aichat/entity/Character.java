@@ -10,12 +10,16 @@ import lombok.Data;
 import java.time.LocalDateTime;
 
 @Data
-@TableName("conversation")
-public class Conversation {
+@TableName("game_character")
+public class Character {
 	@TableId(type = IdType.AUTO)
 	private Long id;
-	private Long characterId;
-	private String title;
+	private String name;
+	private String description;
+	private String personality;
+	private String speakingStyle;
+	private String backstory;
+	private String avatarUrl;
 	@TableField(fill = FieldFill.INSERT)
 	private LocalDateTime createdAt;
 	@TableField(fill = FieldFill.INSERT_UPDATE)
