@@ -11,14 +11,30 @@ CREATE TABLE IF NOT EXISTS game_character (
     updated_at DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
 );
 
--- 修改会话表，添加角色ID字段
-ALTER TABLE conversation ADD COLUMN IF NOT EXISTS character_id BIGINT;
+-- 创建会话表
+CREATE TABLE IF NOT EXISTS conversation (
+    id BIGINT AUTO_INCREMENT PRIMARY KEY,
+    character_id BIGINT NULL,
+    user_id VARCHAR(100),
+    title VARCHAR(255),
+    created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+    updated_at DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    INDEX idx_character (character_id)
+);
 
--- 修改消息表，添加群聊ID和发送者信息字段
-ALTER TABLE message ADD COLUMN IF NOT EXISTS group_id BIGINT;
-ALTER TABLE message ADD COLUMN IF NOT EXISTS sender_id BIGINT;
-ALTER TABLE message ADD COLUMN IF NOT EXISTS sender_name VARCHAR(255);
-ALTER TABLE message ADD COLUMN IF NOT EXISTS conversation_id BIGINT;
+-- 创建消息表
+CREATE TABLE IF NOT EXISTS message (
+    id BIGINT AUTO_INCREMENT PRIMARY KEY,
+    conversation_id BIGINT,
+    group_id BIGINT,
+    sender_id BIGINT,
+    sender_name VARCHAR(255),
+    content TEXT NOT NULL,
+    role VARCHAR(20) NOT NULL,
+    created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+    INDEX idx_conversation (conversation_id),
+    INDEX idx_group (group_id)
+);
 
 -- AI内心独白表
 CREATE TABLE IF NOT EXISTS ai_inner_monologue (
