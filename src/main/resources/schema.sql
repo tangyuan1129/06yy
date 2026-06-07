@@ -56,3 +56,38 @@ CREATE TABLE IF NOT EXISTS ai_active_message_count (
     updated_at DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
     UNIQUE KEY uk_character_date (character_id, date)
 );
+
+-- 用户表
+CREATE TABLE IF NOT EXISTS user (
+    id BIGINT AUTO_INCREMENT PRIMARY KEY,
+    username VARCHAR(50) UNIQUE NOT NULL,
+    password VARCHAR(255) NOT NULL,
+    api_key VARCHAR(255),
+    daily_quota INT DEFAULT 20,
+    used_today INT DEFAULT 0,
+    last_reset_date DATE,
+    created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+    updated_at DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+);
+
+-- 对话日志表（用于追溯）
+CREATE TABLE IF NOT EXISTS chat_log (
+    id BIGINT AUTO_INCREMENT PRIMARY KEY,
+    user_id BIGINT,
+    ip_address VARCHAR(50),
+    user_message TEXT,
+    ai_response TEXT,
+    character_id BIGINT,
+    group_id BIGINT,
+    tokens_used INT DEFAULT 0,
+    created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+    INDEX idx_user (user_id),
+    INDEX idx_time (created_at)
+);
+
+-- 敏感词表
+CREATE TABLE IF NOT EXISTS sensitive_word (
+    id BIGINT AUTO_INCREMENT PRIMARY KEY,
+    word VARCHAR(100) NOT NULL,
+    created_at DATETIME DEFAULT CURRENT_TIMESTAMP
+);

@@ -17,12 +17,26 @@ import java.util.Map;
 @RestController
 @RequestMapping("/api/init")
 @RequiredArgsConstructor
-@CrossOrigin(origins = "*")
 public class InitController {
 
 	private final CharacterService characterService;
 	private final JdbcTemplate jdbcTemplate;
 
+	// ⚠️ 危险接口已禁用 - 生产环境不应提供数据初始化/删除接口
+	// 如需初始化数据，请直接操作数据库
+	// 以下接口已注释：
+	// - /api/init/update-avatars (批量更新头像)
+	// - /api/init/bai-e (创建白厄角色)
+	// - /api/init/hsr-characters (导入所有角色，会DELETE现有数据)
+	
+	@RequestMapping("/disabled")
+	public Map<String, Object> disabled() {
+		return Map.of(
+			"success", false,
+			"message", "此接口已禁用，请勿通过API初始化数据"
+		);
+	}
+/*
 	@PostMapping("/update-avatars")
 	public Map<String, Object> updateAvatars() {
 		log.info("开始更新角色头像URL...");
@@ -257,4 +271,5 @@ public class InitController {
 	private Map<String, String> createCharacterData(String name, String description, String personality, String speakingStyle, String backstory) {
 		return createCharacterData(name, description, personality, speakingStyle, backstory, null);
 	}
+*/
 }

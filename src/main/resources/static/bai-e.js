@@ -1,4 +1,4 @@
-﻿const { createApp, ref, nextTick, onMounted, computed } = Vue;
+﻿﻿const { createApp, ref, nextTick, onMounted, computed } = Vue;
 
 const API_BASE = '/api';
 
@@ -443,6 +443,23 @@ createApp({
             showChatMenu.value = false;
         };
 
+        // API Key相关
+        const saveApiKey = () => {
+            if (apiKeyInput.value.trim()) {
+                localStorage.setItem('zhipu_api_key', apiKeyInput.value.trim());
+                showApiKeyModal.value = false;
+                status.value = 'API Key已保存';
+                setTimeout(() => { status.value = ''; }, 2000);
+            }
+        };
+
+        const loadApiKey = () => {
+            const savedKey = localStorage.getItem('zhipu_api_key');
+            if (savedKey) {
+                apiKeyInput.value = savedKey;
+            }
+        };
+
         // 群聊相关
         const isCharacterSelectedForGroup = (charId) => {
             return selectedCharactersForGroup.value.includes(charId);
@@ -628,6 +645,7 @@ createApp({
 
         onMounted(async () => {
             await init();
+            loadApiKey();
         });
 
         return {
@@ -654,6 +672,8 @@ createApp({
             showProfileModal,
             selectedProfileCharacter,
             showChatMenu,
+            showApiKeyModal,
+            apiKeyInput,
             searchCharacter,
             searchGroup,
             searchGroupMembers,
@@ -676,7 +696,9 @@ createApp({
             startPrivateChat,
             removeMemberFromGroup,
             toggleChatMenu,
-            closeChatMenu
+            closeChatMenu,
+            saveApiKey,
+            loadApiKey
         };
     }
 }).mount('#app');

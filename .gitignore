@@ -33,8 +33,9 @@ build/
 .vscode/
 
 ### 本地配置（不提交到GitHub） ###
-application-local.yml
-application-dev.yml
-application-prod.yml
+src/main/resources/application-local.yml
+src/main/resources/application-dev.yml
+src/main/resources/application-prod.yml
 *.env
 .env
+**/.env

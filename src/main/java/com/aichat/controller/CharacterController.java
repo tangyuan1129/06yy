@@ -10,7 +10,6 @@ import java.util.List;
 @RestController
 @RequestMapping("/api/characters")
 @RequiredArgsConstructor
-@CrossOrigin(origins = "*")
 public class CharacterController {
 
 	private final CharacterService characterService;
@@ -25,6 +24,9 @@ public class CharacterController {
 		return characterService.getCharacterById(id);
 	}
 
+	// ⚠️ 写操作已禁用 - 生产环境不应提供角色增删改接口
+	// 如需管理角色，请直接操作数据库
+/*
 	@PostMapping
 	public Character createCharacter(@RequestBody Character character) {
 		return characterService.createCharacter(character);
@@ -40,4 +42,5 @@ public class CharacterController {
 	public void deleteCharacter(@PathVariable Long id) {
 		characterService.deleteCharacter(id);
 	}
+*/
 }
