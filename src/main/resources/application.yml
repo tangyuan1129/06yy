@@ -1,5 +1,10 @@
 server:
   port: 8080
+  servlet:
+    encoding:
+      charset: UTF-8
+      enabled: true
+      force: true
 
 spring:
   profiles:
@@ -14,6 +19,9 @@ spring:
       mode: always
       schema-locations: classpath:schema.sql
       continue-on-error: true
+  web:
+    resources:
+      charset: UTF-8
 
 mybatis-plus:
   configuration:
@@ -36,3 +44,31 @@ logging:
   level:
     com.aichat: DEBUG
     org.springframework.web.reactive.function.client: DEBUG
+
+# 群聊升级配置
+groupchat:
+  # 发言门控配置
+  gate:
+    history-count: 10
+    max-replies-in-window: 2
+    time-window-minutes: 5
+    model: glm-4-flash
+  
+  # Life Tick配置
+  life-tick:
+    min-interval-minutes: 20
+    max-interval-minutes: 120
+    model: glm-4
+    recent-message-count: 20
+  
+  # 主动消息配置
+  active-message:
+    daily-max-count: 3
+    quiet-start-hour: 1
+    quiet-end-hour: 7
+  
+  # 模型路由配置
+  model-route:
+    cheap-model: glm-4-flash
+    medium-model: glm-4-plus
+    expensive-model: glm-4

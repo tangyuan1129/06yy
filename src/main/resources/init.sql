@@ -28,9 +28,13 @@ CREATE TABLE IF NOT EXISTS conversation (
 -- 创建消息表（如果不存在）
 CREATE TABLE IF NOT EXISTS message (
     id BIGINT AUTO_INCREMENT PRIMARY KEY,
-    conversation_id BIGINT NOT NULL,
+    conversation_id BIGINT,
+    group_id BIGINT,
     role VARCHAR(50) NOT NULL,
+    sender_id BIGINT,
+    sender_name VARCHAR(255),
     content TEXT NOT NULL,
     created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
-    INDEX idx_conversation (conversation_id)
+    INDEX idx_conversation (conversation_id),
+    INDEX idx_group (group_id)
 );

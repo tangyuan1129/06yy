@@ -10,7 +10,10 @@ import java.time.LocalDateTime;
 public class Message {
 	private Long id;
 	private Long conversationId;
+	private Long groupId;
 	private String role;        // "user" 或 "assistant"
+	private Long senderId;
+	private String senderName;
 	private String content;
 	private LocalDateTime createdAt;
 }

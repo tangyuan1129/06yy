@@ -21,6 +21,19 @@ createApp({
         const selectedMemberToAdd = ref(null);
         const currentGroupMembers = ref([]);
         const groupMemberCache = ref({});
+        const showProfileModal = ref(false);
+        const selectedProfileCharacter = ref(null);
+        const showChatMenu = ref(false);
+        const searchCharacter = ref('');
+        const searchGroup = ref('');
+        const searchGroupMembers = ref('');
+        const searchAddMembers = ref('');
+
+        // 获取角色头像URL的辅助函数
+        const getCharacterAvatar = (characterId) => {
+            const char = characters.value.find(c => c.id === characterId);
+            return char && char.avatarUrl ? char.avatarUrl : null;
+        };
 
         // 当前角色信息
         const currentCharacter = computed(() => {
@@ -36,16 +49,92 @@ createApp({
             return group ? group.name : '';
         });
 
+        const filteredCharacters = computed(() => {
+            if (!searchCharacter.value.trim()) {
+                return characters.value;
+            }
+            const keyword = searchCharacter.value.toLowerCase();
+            return characters.value.filter(char => 
+                char.name.toLowerCase().includes(keyword)
+            );
+        });
+
+        const filteredGroups = computed(() => {
+            if (!searchGroup.value.trim()) {
+                return groups.value;
+            }
+            const keyword = searchGroup.value.toLowerCase();
+            return groups.value.filter(group => 
+                group.name.toLowerCase().includes(keyword)
+            );
+        });
+
+        const filteredGroupMembers = computed(() => {
+            if (!searchGroupMembers.value.trim()) {
+                return characters.value;
+            }
+            const keyword = searchGroupMembers.value.toLowerCase();
+            return characters.value.filter(char => 
+                char.name.toLowerCase().includes(keyword)
+            );
+        });
+
+        const filteredAddMembers = computed(() => {
+            const available = availableCharactersToAdd.value;
+            if (!searchAddMembers.value.trim()) {
+                return available;
+            }
+            const keyword = searchAddMembers.value.toLowerCase();
+            return available.filter(char => 
+                char.name.toLowerCase().includes(keyword)
+            );
+        });
+
         // 初始化
         const init = async () => {
             try {
+                // 先初始化白厄角色
+                await initBaiE();
+                
+                // 更新所有角色头像
+                await updateAvatars();
+                
                 await Promise.all([
                     loadCharacters(),
-                    loadGroups(),
-                    initDatabase()
+                    loadGroups()
                 ]);
             } catch (error) {
                 console.error('初始化失败:', error);
+            }
+        };
+
+        const initBaiE = async () => {
+            try {
+                const response = await fetch(API_BASE + '/init/bai-e', {
+                    method: 'POST'
+                });
+                if (response.ok) {
+                    console.log('白厄角色初始化成功');
+                }
+            } catch (error) {
+                console.error('白厄角色初始化失败:', error);
+            }
+        };
+
+        const updateAvatars = async () => {
+            try {
+                const response = await fetch(API_BASE + '/init/update-avatars', {
+                    method: 'POST'
+                });
+                if (response.ok) {
+                    const data = await response.json();
+                    console.log('头像更新结果:', data);
+                    
+                    // 重新加载角色
+                    await loadCharacters();
+                }
+            } catch (error) {
+                console.error('头像更新失败:', error);
             }
         };
 
@@ -64,9 +153,14 @@ createApp({
         const loadCharacters = async () => {
             try {
                 const response = await fetch(API_BASE + '/characters');
+                if (!response.ok) {
+                    console.error('加载角色失败，状态码:', response.status);
+                    return;
+                }
                 const data = await response.json();
                 if (Array.isArray(data)) {
                     characters.value = data;
+                    console.log('加载角色成功，共', data.length, '个角色');
                 }
             } catch (error) {
                 console.error('加载角色失败:', error);
@@ -99,7 +193,16 @@ createApp({
                 const response = await fetch(API_BASE + '/groups/' + groupId + '/members');
                 const data = await response.json();
                 if (Array.isArray(data)) {
-                    groupMemberCache.value[groupId] = data;
+                    // 去重：根据成员ID去重
+                    const uniqueMembers = [];
+                    const seenIds = new Set();
+                    for (const member of data) {
+                        if (!seenIds.has(member.id)) {
+                            seenIds.add(member.id);
+                            uniqueMembers.push(member);
+                        }
+                    }
+                    groupMemberCache.value[groupId] = uniqueMembers;
                 }
             } catch (error) {
                 console.error('加载群成员失败:', error);
@@ -154,7 +257,8 @@ createApp({
                         role: msg.role,
                         content: msg.content,
                         senderId: msg.senderId,
-                        senderName: msg.senderName
+                        senderName: msg.senderName,
+                        senderAvatar: getCharacterAvatar(msg.senderId)
                     }));
                     console.log('设置好的 messages.value:', messages.value);
                 } else {
@@ -183,7 +287,8 @@ createApp({
                             role: msg.role,
                             content: msg.content,
                             senderId: msg.senderId,
-                            senderName: msg.senderName
+                            senderName: msg.senderName,
+                            senderAvatar: getCharacterAvatar(msg.senderId)
                         }));
                     }
                 }
@@ -249,7 +354,8 @@ createApp({
                         role: 'assistant',
                         content: '',
                         senderId: currentCharacterId.value,
-                        senderName: currentCharacterName.value
+                        senderName: currentCharacterName.value,
+                        senderAvatar: getCharacterAvatar(currentCharacterId.value)
                     });
                     
                     while (true) {
@@ -290,7 +396,8 @@ createApp({
                                 role: 'assistant',
                                 content: msg.content,
                                 senderId: msg.characterId,
-                                senderName: msg.characterName
+                                senderName: msg.characterName,
+                                senderAvatar: getCharacterAvatar(msg.characterId)
                             });
                             await scrollToBottom();
                             await new Promise(resolve => setTimeout(resolve, 500));
@@ -321,10 +428,19 @@ createApp({
                 return;
             }
             messages.value = [];
+            showChatMenu.value = false;
             status.value = '聊天记录已清空';
             setTimeout(() => {
                 status.value = '';
             }, 2000);
+        };
+
+        const toggleChatMenu = () => {
+            showChatMenu.value = !showChatMenu.value;
+        };
+
+        const closeChatMenu = () => {
+            showChatMenu.value = false;
         };
 
         // 群聊相关
@@ -420,7 +536,7 @@ createApp({
         };
 
         const deleteGroup = async (groupId, event) => {
-            event.stopPropagation(); // 防止触发选择群聊
+            event.stopPropagation();
             
             if (!confirm('确定要解散这个群聊吗？这将删除所有聊天记录！')) {
                 return;
@@ -438,7 +554,6 @@ createApp({
 
                 console.log('群聊解散成功');
                 
-                // 如果当前正在这个群聊中，就清空聊天
                 if (currentGroupId.value === groupId) {
                     currentGroupId.value = null;
                     chatType.value = null;
@@ -456,12 +571,60 @@ createApp({
             }
         };
 
+        const showCharacterProfile = (character) => {
+            selectedProfileCharacter.value = character;
+            showProfileModal.value = true;
+        };
+
+        const startPrivateChat = (character) => {
+            showProfileModal.value = false;
+            selectCharacter(character);
+        };
+
+        const removeMemberFromGroup = async (member) => {
+            if (!confirm(`确定要将 ${member.name} 移出群聊吗？`)) {
+                return;
+            }
+
+            try {
+                const response = await fetch(API_BASE + '/groups/' + currentGroupId.value + '/members/' + member.id, {
+                    method: 'DELETE'
+                });
+
+                if (!response.ok) {
+                    throw new Error('HTTP错误: ' + response.status);
+                }
+
+                await loadGroupMembers(currentGroupId.value);
+                currentGroupMembers.value = groupMemberCache.value[currentGroupId.value] || [];
+                status.value = `已将 ${member.name} 移出群聊`;
+                showProfileModal.value = false;
+                setTimeout(() => {
+                    status.value = '';
+                }, 2000);
+            } catch (error) {
+                console.error('移除成员失败:', error);
+                alert('移除成员失败: ' + error.message);
+            }
+        };
+
         const scrollToBottom = async () => {
             await nextTick();
             if (messagesContainer.value) {
                 messagesContainer.value.scrollTop = messagesContainer.value.scrollHeight;
             }
         };
+
+        // 计算不在群聊中的角色（用于添加成员）
+        const availableCharactersToAdd = computed(() => {
+            if (!currentGroupId.value || !currentGroupMembers.value.length) {
+                return characters.value;
+            }
+            // 获取当前群聊成员ID集合
+            const groupMemberIds = new Set(currentGroupMembers.value.map(m => m.id));
+            // 过滤掉已经在群聊中的角色
+            return characters.value.filter(char => !groupMemberIds.has(char.id));
+        });
 
         onMounted(async () => {
             await init();
@@ -484,9 +647,21 @@ createApp({
             selectedCharactersForGroup,
             selectedMemberToAdd,
             currentGroupMembers,
+            availableCharactersToAdd,
             currentCharacter,
             currentCharacterName,
             currentGroupName,
+            showProfileModal,
+            selectedProfileCharacter,
+            showChatMenu,
+            searchCharacter,
+            searchGroup,
+            searchGroupMembers,
+            searchAddMembers,
+            filteredCharacters,
+            filteredGroups,
+            filteredGroupMembers,
+            filteredAddMembers,
             selectCharacter,
             selectGroup,
             sendMessage,
@@ -496,7 +671,12 @@ createApp({
             createGroup,
             addMemberToGroup,
             getGroupMemberCount,
-            deleteGroup
+            deleteGroup,
+            showCharacterProfile,
+            startPrivateChat,
+            removeMemberFromGroup,
+            toggleChatMenu,
+            closeChatMenu
         };
     }
 }).mount('#app');

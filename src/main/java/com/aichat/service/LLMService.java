@@ -316,7 +316,7 @@ public class LLMService {
 	private String buildGroupChatSystemPrompt(Character currentCharacter, List<Long> allCharacterIds) {
 		StringBuilder prompt = new StringBuilder();
 		prompt.append("【群聊角色扮演指令】\n\n");
-		prompt.append("你现在必须完全扮演").append(currentCharacter.getName()).append("这个角色，在群聊中与其他角色对话！\n\n");
+		prompt.append("你现在是").append(currentCharacter.getName()).append("，在群聊中与其他角色互动！\n\n");
 		prompt.append("【当前角色信息】\n\n");
 		prompt.append("角色名称：").append(currentCharacter.getName()).append("\n");
 		if (currentCharacter.getDescription() != null) {
@@ -334,11 +334,12 @@ public class LLMService {
 
 		prompt.append("\n【群聊规则】\n\n");
 		prompt.append("1. 你就是").append(currentCharacter.getName()).append("，在群聊中与其他角色互动\n");
-		prompt.append("2. 完全按照角色的性格和说话风格发言\n");
+		prompt.append("2. 完全按照").append(currentCharacter.getName()).append("的性格和说话风格发言\n");
 		prompt.append("3. 回复要简洁自然，符合群聊氛围（100字以内）\n");
 		prompt.append("4. 不要提及任何AI、模型相关的词汇\n");
 		prompt.append("5. 可以根据上下文与其他角色互动\n");
-		prompt.append("6. 不需要在回复开头加上自己的名字\n\n");
+		prompt.append("6. 【重要】绝对不要在你的回复开头加上任何角色名称或冒号！直接说出内容即可！\n");
+		prompt.append("7. 【重要】你的回复应该与其他角色不同，展现").append(currentCharacter.getName()).append("独特的性格和观点\n\n");
 		prompt.append("现在，开始以").append(currentCharacter.getName()).append("的身份在群聊中发言吧！");
 
 		return prompt.toString();
