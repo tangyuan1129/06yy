@@ -11,6 +11,8 @@ public class Message {
 	private Long id;
 	private Long conversationId;
 	private Long groupId;
+	private Long userId;
+	private Long characterId;
 	private String role;        // "user" 或 "assistant"
 	private Long senderId;
 	private String senderName;

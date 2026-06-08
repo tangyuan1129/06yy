@@ -39,3 +39,5 @@ src/main/resources/application-prod.yml
 *.env
 .env
 **/.env
+src/main/resources/migration-passwords.sql
+src/main/resources/aichat.p12

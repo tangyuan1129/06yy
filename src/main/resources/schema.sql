@@ -19,7 +19,9 @@ CREATE TABLE IF NOT EXISTS conversation (
     title VARCHAR(255),
     created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
     updated_at DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-    INDEX idx_character (character_id)
+    INDEX idx_character (character_id),
+    INDEX idx_user (user_id),
+    INDEX idx_updated (updated_at DESC)
 );
 
 -- 创建消息表
@@ -33,7 +35,9 @@ CREATE TABLE IF NOT EXISTS message (
     role VARCHAR(20) NOT NULL,
     created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
     INDEX idx_conversation (conversation_id),
-    INDEX idx_group (group_id)
+    INDEX idx_group (group_id),
+    INDEX idx_sender (sender_id),
+    INDEX idx_created (created_at DESC)
 );
 
 -- AI内心独白表
@@ -66,8 +70,10 @@ CREATE TABLE IF NOT EXISTS user (
     daily_quota INT DEFAULT 20,
     used_today INT DEFAULT 0,
     last_reset_date DATE,
+    total_tokens BIGINT DEFAULT 0,
     created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
-    updated_at DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+    updated_at DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    INDEX idx_username (username)
 );
 
 -- 对话日志表（用于追溯）

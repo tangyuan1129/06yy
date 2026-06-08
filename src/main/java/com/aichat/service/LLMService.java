@@ -1,6 +1,6 @@
 package com.aichat.service;
 
-import com.aichat.config.LLMConfig;
+import com.aichat.config.LlmConfig;
 import com.aichat.entity.Character;
 import com.aichat.entity.Message;
 import com.fasterxml.jackson.databind.JsonNode;
@@ -25,11 +25,11 @@ public class LLMService {
 	private static final Logger logger = LoggerFactory.getLogger(LLMService.class);
 	private final ObjectMapper objectMapper = new ObjectMapper();
 
-	private final LLMConfig llmConfig;
+	private final LlmConfig llmConfig;
 	private final WebClient webClient;
 
 	// 修复：正确的构造函数
-	public LLMService(WebClient.Builder webClientBuilder, LLMConfig llmConfig) {
+	public LLMService(WebClient.Builder webClientBuilder, LlmConfig llmConfig) {
 		this.webClient = webClientBuilder.build();
 		this.llmConfig = llmConfig;
 	}
@@ -39,11 +39,15 @@ public class LLMService {
 	}
 
 	public void streamReply(List<Message> history, String userMessage, Character character, Consumer<String> tokenConsumer) {
+		streamReply(history, userMessage, character, null, tokenConsumer);
+	}
+
+	public void streamReply(List<Message> history, String userMessage, Character character, String apiKey, Consumer<String> tokenConsumer) {
 		logger.info("========== 开始处理用户请求: {} ==========", userMessage);
 
 		switch (llmConfig.getProvider().toLowerCase()) {
 			case "zhipu":
-				streamFromZhipu(history, userMessage, character, tokenConsumer);
+				streamFromZhipu(history, userMessage, character, apiKey, tokenConsumer);
 				break;
 			case "test":
 			default:
@@ -52,8 +56,9 @@ public class LLMService {
 		}
 	}
 
-	private void streamFromZhipu(List<Message> history, String userMessage, Character character, Consumer<String> tokenConsumer) {
+	private void streamFromZhipu(List<Message> history, String userMessage, Character character, String apiKey, Consumer<String> tokenConsumer) {
 		logger.info("========== 调用智谱AI API ==========");
+		String effectiveKey = (apiKey != null && !apiKey.isEmpty()) ? apiKey : llmConfig.getApi().getKey();
 
 		List<Map<String, String>> messages = new ArrayList<>();
 
@@ -89,7 +94,7 @@ public class LLMService {
 
 		webClient.post()
 				.uri(llmConfig.getApi().getUrl())
-				.header("Authorization", "Bearer " + llmConfig.getApi().getKey())
+				.header("Authorization", "Bearer " + effectiveKey)
 				.header("Content-Type", "application/json")
 				.bodyValue(requestBody)
 				.retrieve()

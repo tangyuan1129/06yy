@@ -14,6 +14,7 @@ import java.time.LocalDateTime;
 public class Conversation {
 	@TableId(type = IdType.AUTO)
 	private Long id;
+	private Long userId;
 	private Long characterId;
 	private String title;
 	@TableField(fill = FieldFill.INSERT)

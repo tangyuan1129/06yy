@@ -35,28 +35,75 @@ public class ChatService {
 	private final GroupChatConfig groupChatConfig;
 	private final GateControlService gateControlService;
 	private final InnerMonologueService innerMonologueService;
+	private final UserService userService;
+	private final SensitiveWordService sensitiveWordService;
 
 	@Transactional
 	public SseEmitter handleChat(ChatRequest request) {
 		logger.info("========== 开始处理聊天请求 ==========");
 		logger.info("用户消息: {}", request.getMessage());
+		logger.info("用户ID: {}", request.getUserId());
+
+		// 检查用户是否有自己的API Key
+		boolean hasUserApiKey = false;
+		if (request.getUserId() != null) {
+			try {
+				String userApiKey = userService.getDecryptedApiKey(request.getUserId());
+				hasUserApiKey = (userApiKey != null && !userApiKey.isEmpty());
+				logger.info("用户是否有自己的API Key: {}", hasUserApiKey);
+			} catch (Exception e) {
+				logger.warn("获取用户API Key失败: {}", e.getMessage());
+			}
+		}
+
+		// 只有当用户没有自己的API Key时，才检查配额
+		if (request.getUserId() != null && !hasUserApiKey) {
+			if (!userService.canChat(request.getUserId())) {
+				logger.warn("用户 {} 今日配额已用完", request.getUserId());
+				throw new RuntimeException("今日对话次数已用完，请明天再试");
+			}
+		}
 
 		Long conversationId = request.getConversationId();
 		if (conversationId == null) {
 			logger.info("创建新会话");
 			Conversation conv = new Conversation();
+			conv.setCharacterId(request.getCharacterId());
+			conv.setUserId(request.getUserId());
 			conv.setTitle(request.getMessage().substring(0, Math.min(20, request.getMessage().length())));
 			conversationMapper.insert(conv);
 			conversationId = conv.getId();
 			logger.info("新会话ID: {}", conversationId);
 		}
 
+		// 敏感词检查
+		if (sensitiveWordService.containsSensitiveWord(request.getMessage())) {
+			SseEmitter emitter = new SseEmitter(300000L);
+			try {
+					emitter.send(SseEmitter.event().name("error").data("消息包含敏感词，请修改后重试"));
+			} catch (IOException e) {
+				logger.error("发送错误消息失败: {}", e.getMessage());
+			}
+			emitter.complete();
+			return emitter;
+		}
+
 		logger.info("保存用户消息");
 		Message userMsg = new Message();
 		userMsg.setConversationId(conversationId);
+		userMsg.setUserId(request.getUserId());
+		userMsg.setCharacterId(request.getCharacterId());
 		userMsg.setRole("user");
 		userMsg.setContent(request.getMessage());
 		messageMapper.insert(userMsg);
+
+		// 扣减配额（只有使用系统API Key时才扣减）
+		if (request.getUserId() != null && !hasUserApiKey) {
+			userService.incrementUsage(request.getUserId());
+			logger.info("用户 {} 配额已扣减（使用系统API Key）", request.getUserId());
+		} else if (request.getUserId() != null && hasUserApiKey) {
+			logger.info("用户 {} 使用自己的API Key，不扣减配额", request.getUserId());
+		}
 
 		List<Message> history = messageMapper.selectList(
 				new LambdaQueryWrapper<Message>()
@@ -70,6 +117,8 @@ public class ChatService {
 
 		StringBuilder fullReply = new StringBuilder();
 		final Long finalConversationId = conversationId;
+		final Long finalUserId = request.getUserId();
+		final Long finalCharacterId = request.getCharacterId();
 
 		// 获取角色信息
 		Character character = request.getCharacterId() != null ? characterService.getCharacterById(request.getCharacterId()) : null;
@@ -79,11 +128,27 @@ public class ChatService {
 			logger.warn("未找到角色ID: {}", request.getCharacterId());
 		}
 
+		// 如果前端没有传apiKey，从数据库获取用户的apiKey（已加密存储）
+		String effectiveApiKey = request.getApiKey();
+		if (effectiveApiKey == null || effectiveApiKey.isEmpty()) {
+			try {
+				String userApiKey = userService.getDecryptedApiKey(request.getUserId());
+				if (userApiKey != null && !userApiKey.isEmpty()) {
+					effectiveApiKey = userApiKey;
+					logger.info("从数据库获取用户API Key");
+				}
+			} catch (Exception e) {
+				logger.warn("获取用户API Key失败: {}", e.getMessage());
+			}
+		}
+
+		final String finalApiKey = effectiveApiKey;
+
 		CompletableFuture.runAsync(() -> {
 			logger.info("========== 异步任务开始 ==========");
 			try {
 				logger.info("开始调用 LLMService.streamReply");
-				llmService.streamReply(history, request.getMessage(), character, token -> {
+				llmService.streamReply(history, request.getMessage(), character, finalApiKey, token -> {
 					logger.debug("准备发送 token: {}", token);
 					try {
 						emitter.send(SseEmitter.event().data(token));
@@ -105,11 +170,7 @@ public class ChatService {
 				logger.info("[DONE] 发送成功");
 
 				logger.info("保存 AI 回复，内容长度: {}", fullReply.length());
-				Message assistantMsg = new Message();
-				assistantMsg.setConversationId(finalConversationId);
-				assistantMsg.setRole("assistant");
-				assistantMsg.setContent(fullReply.toString());
-				messageMapper.insert(assistantMsg);
+				saveAssistantMessage(finalConversationId, finalUserId, finalCharacterId, fullReply.toString());
 
 				logger.info("完成 SSE emitter");
 				emitter.complete();
@@ -127,6 +188,21 @@ public class ChatService {
 
 		logger.info("返回 SSE emitter");
 		return emitter;
+	}
+
+	/**
+	 * 保存 AI 回复到数据库（独立事务，用于异步任务中调用）
+	 */
+	@Transactional
+	public void saveAssistantMessage(Long conversationId, Long userId, Long characterId, String content) {
+		Message assistantMsg = new Message();
+		assistantMsg.setConversationId(conversationId);
+		assistantMsg.setUserId(userId);
+		assistantMsg.setCharacterId(characterId);
+		assistantMsg.setRole("assistant");
+		assistantMsg.setContent(content);
+		messageMapper.insert(assistantMsg);
+		logger.info("AI 回复已保存到数据库，内容长度: {}", content.length());
 	}
 
 	@Transactional
@@ -351,5 +427,19 @@ public class ChatService {
 				.eq(Conversation::getCharacterId, characterId)
 				.orderByDesc(Conversation::getUpdatedAt)
 		);
+	}
+
+	public List<Message> getMessagesByCharacter(Long characterId, Long userId) {
+		logger.info("获取角色 {} 的消息，用户ID: {}", characterId, userId);
+		LambdaQueryWrapper<Message> wrapper = new LambdaQueryWrapper<Message>()
+			.eq(Message::getCharacterId, characterId)
+			.isNotNull(Message::getConversationId)
+			.orderByAsc(Message::getCreatedAt);
+		
+		if (userId != null) {
+			wrapper.eq(Message::getUserId, userId);
+		}
+		
+		return messageMapper.selectList(wrapper);
 	}
 }

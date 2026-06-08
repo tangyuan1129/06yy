@@ -28,6 +28,32 @@ createApp({
         const searchGroup = ref('');
         const searchGroupMembers = ref('');
         const searchAddMembers = ref('');
+        const showApiKeyModal = ref(false);
+        const apiKeyInput = ref('');
+        const showApiKey = ref(false);
+        const showLoginModal = ref(true);
+        const isLoggedIn = ref(false);
+        const isLoginMode = ref(true);
+        const authUsername = ref('');
+        const authPassword = ref('');
+        const authPasswordConfirm = ref('');
+        const showAuthPassword = ref(false);
+        const showAuthPasswordConfirm = ref(false);
+        const showForgotPasswordModal = ref(false);
+        const forgotUsername = ref('');
+        const newResetPassword = ref('');
+        const newResetPasswordConfirm = ref('');
+        const showNewPassword = ref(false);
+        const showNewPasswordConfirm = ref(false);
+        const currentUserId = ref(null);
+        const currentUsername = ref('');
+        const remainingQuota = ref(0);
+        const currentReader = ref(null);  // 保存当前的SSE流reader
+        const abortController = ref(null);
+        const showSettingsModal = ref(false);
+        const oldPassword = ref('');
+        const newPassword = ref('');
+        const newPasswordConfirm = ref('');
 
         // 获取角色头像URL的辅助函数
         const getCharacterAvatar = (characterId) => {
@@ -213,6 +239,32 @@ createApp({
             return groupMemberCache.value[groupId] ? groupMemberCache.value[groupId].length : 0;
         };
 
+        // 加载角色会话
+        const loadCharacterConversation = async (characterId) => {
+            try {
+                console.log('加载角色', characterId, '的历史消息');
+                const msgResponse = await fetch(API_BASE + '/messages/character/' + characterId + '?userId=' + currentUserId.value);
+                console.log('历史消息响应状态:', msgResponse.status);
+                
+                if (msgResponse.ok) {
+                    const messagesData = await msgResponse.json();
+                    console.log('获取到历史消息数量:', messagesData.length);
+                    
+                    messages.value = messagesData.map(msg => ({
+                        role: msg.role,
+                        content: msg.content,
+                        senderName: msg.role === 'user' ? '我' : (msg.senderName || currentCharacterName.value),
+                        senderAvatar: msg.role === 'assistant' ? getCharacterAvatar(characterId) : null,
+                        createdAt: msg.createdAt
+                    }));
+                    
+                    await scrollToBottom();
+                }
+            } catch (e) {
+                console.error('加载历史消息失败:', e);
+            }
+        };
+
         // 选择角色
         const selectCharacter = async (character) => {
             currentTab.value = 'single';
@@ -271,36 +323,21 @@ createApp({
             }
         };
 
-        // 加载角色会话
-        const loadCharacterConversation = async (charId) => {
-            try {
-                const convResponse = await fetch(API_BASE + '/conversations/' + charId);
-                const conversations = await convResponse.json();
-                
-                if (conversations && conversations.length > 0) {
-                    const latestConv = conversations[0];
-                    const msgResponse = await fetch(API_BASE + '/messages/' + latestConv.id);
-                    const historyMessages = await msgResponse.json();
-                    
-                    if (historyMessages && historyMessages.length > 0) {
-                        messages.value = historyMessages.map(msg => ({
-                            role: msg.role,
-                            content: msg.content,
-                            senderId: msg.senderId,
-                            senderName: msg.senderName,
-                            senderAvatar: getCharacterAvatar(msg.senderId)
-                        }));
-                    }
-                }
-                await scrollToBottom();
-            } catch (error) {
-                console.error('加载会话失败:', error);
-            }
-        };
-
         // 发送消息
         const sendMessage = async () => {
             if (!userInput.value.trim() || !chatType.value || isGenerating.value) {
+                return;
+            }
+
+            // 检查剩余次数（有API Key的用户不受限制）
+            if (isLoggedIn.value && !hasApiKey.value && remainingQuota.value <= 0) {
+                messages.value.push({
+                    role: 'assistant',
+                    content: '您的免费聊天次数已用完，请明天再来或联系管理员获取更多次数',
+                    senderName: currentCharacterName.value || '系统',
+                    senderAvatar: getCharacterAvatar(currentCharacterId.value)
+                });
+                await scrollToBottom();
                 return;
             }
 
@@ -321,9 +358,12 @@ createApp({
                 let endpoint;
 
                 if (chatType.value === 'single') {
+                    // API Key只存储在后端，后端会自动使用
                     requestBody = {
                         message: message,
-                        characterId: currentCharacterId.value
+                        characterId: currentCharacterId.value,
+                        userId: currentUserId.value,
+                        apiKey: '' // 后端会从数据库获取用户的API Key
                     };
                     endpoint = API_BASE + '/chat/stream';
                 } else {
@@ -349,6 +389,8 @@ createApp({
 
                 if (chatType.value === 'single') {
                     const reader = response.body.getReader();
+                    currentReader.value = reader;  // 保存reader引用
+                    
                     const decoder = new TextDecoder();
                     messages.value.push({
                         role: 'assistant',
@@ -358,34 +400,39 @@ createApp({
                         senderAvatar: getCharacterAvatar(currentCharacterId.value)
                     });
                     
-                    while (true) {
-                        const { done, value } = await reader.read();
-                        if (done) break;
+                    try {
+                        while (true) {
+                            const { done, value } = await reader.read();
+                            if (done) break;
 
-                        const chunk = decoder.decode(value);
-                        const lines = chunk.split('\n');
+                            const chunk = decoder.decode(value);
+                            const lines = chunk.split('\n');
 
-                        for (let line of lines) {
-                            line = line.trim();
-                            if (line === '') continue;
-                            if (line === '[DONE]') break;
-                            
-                            let content = line;
-                            if (line.startsWith('data: ')) {
-                                content = line.substring(6);
-                            } else if (line.startsWith('data:')) {
-                                content = line.substring(5);
-                            }
-                            
-                            content = content.trim();
-                            if (content.startsWith('[CONVERSATION_ID:')) continue;
-                            if (content === '[DONE]') break;
-                            
-                            if (content) {
-                                messages.value[messages.value.length - 1].content += content;
-                                await scrollToBottom();
+                            for (let line of lines) {
+                                line = line.trim();
+                                if (line === '') continue;
+                                if (line === '[DONE]') break;
+                                
+                                let content = line;
+                                if (line.startsWith('data: ')) {
+                                    content = line.substring(6);
+                                } else if (line.startsWith('data:')) {
+                                    content = line.substring(5);
+                                }
+                                
+                                content = content.trim();
+                                if (content.startsWith('[CONVERSATION_ID:')) continue;
+                                if (content === '[DONE]') break;
+                                
+                                if (content) {
+                                    messages.value[messages.value.length - 1].content += content;
+                                    await scrollToBottom();
+                                }
                             }
                         }
+                    } finally {
+                        // 流完成后清除reader引用
+                        currentReader.value = null;
                     }
                 } else {
                     const data = await response.json();
@@ -419,6 +466,20 @@ createApp({
                 status.value = '发送失败';
             } finally {
                 isGenerating.value = false;
+                currentReader.value = null;  // 清除reader引用
+                
+                // 更新剩余配额
+                if (isLoggedIn.value && currentUserId.value && !hasApiKey.value) {
+                    try {
+                        const response = await fetch(API_BASE + '/auth/quota/' + currentUserId.value);
+                        const data = await response.json();
+                        if (data.success) {
+                            remainingQuota.value = data.remaining;
+                        }
+                    } catch (error) {
+                        console.error('更新配额失败:', error);
+                    }
+                }
             }
         };
 
@@ -444,19 +505,309 @@ createApp({
         };
 
         // API Key相关
-        const saveApiKey = () => {
+        const hasApiKey = ref(false);
+
+        const saveApiKey = async () => {
             if (apiKeyInput.value.trim()) {
-                localStorage.setItem('zhipu_api_key', apiKeyInput.value.trim());
-                showApiKeyModal.value = false;
-                status.value = 'API Key已保存';
-                setTimeout(() => { status.value = ''; }, 2000);
+                try {
+                    const response = await fetch(API_BASE + '/auth/update-api-key', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({
+                            userId: currentUserId.value,
+                            apiKey: apiKeyInput.value.trim()
+                        })
+                    });
+                    const data = await response.json();
+                    if (data.success) {
+                        // 不保存到localStorage，只更新状态
+                        hasApiKey.value = true;
+                        apiKeyInput.value = ''; // 清空输入框，不在前端保留
+                        status.value = 'API Key已保存（仅显示一次）';
+                        setTimeout(() => { status.value = ''; }, 3000);
+                    } else {
+                        alert(data.message);
+                    }
+                } catch (e) {
+                    alert('保存失败: ' + e.message);
+                }
             }
         };
 
-        const loadApiKey = () => {
-            const savedKey = localStorage.getItem('zhipu_api_key');
-            if (savedKey) {
-                apiKeyInput.value = savedKey;
+        const deleteApiKey = async () => {
+            if (!confirm('确定要删除API Key吗？删除后将使用系统默认配置')) return;
+            try {
+                const response = await fetch(API_BASE + '/auth/update-api-key', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        userId: currentUserId.value,
+                        apiKey: ''
+                    })
+                });
+                const data = await response.json();
+                if (data.success) {
+                    apiKeyInput.value = '';
+                    hasApiKey.value = false;
+                    status.value = 'API Key已删除';
+                    setTimeout(() => { status.value = ''; }, 2000);
+                } else {
+                    alert(data.message);
+                }
+            } catch (e) {
+                alert('删除失败: ' + e.message);
+            }
+        };
+
+        const loadApiKey = async () => {
+            // 如果已登录，从后端获取API Key状态
+            if (isLoggedIn.value && currentUserId.value) {
+                try {
+                    const response = await fetch(API_BASE + '/auth/user-info/' + currentUserId.value);
+                    const data = await response.json();
+                    if (data.success) {
+                        hasApiKey.value = data.hasApiKey;
+                        // 不再从localStorage读取，API Key只存储在后端
+                        apiKeyInput.value = '';
+                        return;
+                    }
+                } catch (error) {
+                    console.error('获取用户信息失败:', error);
+                }
+            }
+            
+            hasApiKey.value = false;
+        };
+
+        const login = async () => {
+            if (!authUsername.value.trim() || !authPassword.value.trim()) {
+                alert('请输入用户名和密码');
+                return;
+            }
+            try {
+                const response = await fetch(API_BASE + '/auth/login', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        username: authUsername.value,
+                        password: authPassword.value
+                    })
+                });
+                const data = await response.json();
+                if (data.success) {
+                    isLoggedIn.value = true;
+                    showLoginModal.value = false;
+                    currentUserId.value = data.userId;
+                    currentUsername.value = data.username;
+                    remainingQuota.value = data.remainingQuota;
+                    hasApiKey.value = data.hasApiKey || false;
+                    localStorage.setItem('userId', data.userId);
+                    localStorage.setItem('username', data.username);
+                    
+                    // API Key只存储在后端，不在前端保留
+                    apiKeyInput.value = '';
+                    
+                    status.value = '登录成功，欢迎 ' + data.username;
+                    setTimeout(() => { status.value = ''; }, 2000);
+                    init();
+                } else {
+                    alert(data.message || '登录失败，请检查用户名和密码');
+                }
+            } catch (e) {
+                alert('登录失败，请检查网络连接');
+            }
+        };
+
+        const register = async () => {
+            if (!authUsername.value.trim() || !authPassword.value.trim()) {
+                alert('请输入用户名和密码');
+                return;
+            }
+            if (authPassword.value !== authPasswordConfirm.value) {
+                alert('两次输入的密码不一致');
+                return;
+            }
+            if (authPassword.value.length < 6) {
+                alert('密码长度不能少于6位');
+                return;
+            }
+            try {
+                const response = await fetch(API_BASE + '/auth/register', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        username: authUsername.value,
+                        password: authPassword.value
+                    })
+                });
+                const data = await response.json();
+                if (data.success) {
+                    alert('注册成功！请登录');
+                    isLoginMode.value = true;
+                    authPassword.value = '';
+                } else {
+                    alert(data.message);
+                }
+            } catch (e) {
+                alert('注册失败: ' + e.message);
+            }
+        };
+
+        const logout = async () => {
+            // 如果有正在进行的SSE流，先中断它
+            if (currentReader.value) {
+                try {
+                    await currentReader.value.cancel();
+                } catch (e) {
+                    // 忽略取消错误
+                }
+                currentReader.value = null;
+            }
+            
+            isGenerating.value = false;
+            
+            // 先清空消息列表，让DOM先更新
+            messages.value = [];
+            
+            // 使用nextTick确保DOM更新后再执行其他操作
+            await nextTick();
+            
+            isLoggedIn.value = false;
+            showLoginModal.value = true;
+            isLoginMode.value = true;
+            currentUserId.value = null;
+            currentUsername.value = '';
+            authUsername.value = '';
+            authPassword.value = '';
+            authPasswordConfirm.value = '';
+            chatType.value = null;
+            currentCharacterId.value = null;
+            currentGroupId.value = null;
+            localStorage.removeItem('userId');
+            localStorage.removeItem('username');
+        };
+
+        const resetPassword = async () => {
+            if (!forgotUsername.value.trim()) {
+                alert('请输入用户名');
+                return;
+            }
+            if (!newResetPassword.value.trim()) {
+                alert('请输入新密码');
+                return;
+            }
+            if (newResetPassword.value.length < 6) {
+                alert('新密码长度不能少于6位');
+                return;
+            }
+            if (newResetPassword.value !== newResetPasswordConfirm.value) {
+                alert('两次输入的密码不一致');
+                return;
+            }
+            try {
+                const response = await fetch(API_BASE + '/auth/reset-password', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        username: forgotUsername.value,
+                        newPassword: newResetPassword.value
+                    })
+                });
+                const data = await response.json();
+                if (data.success) {
+                    alert('密码重置成功！请使用新密码登录');
+                    showForgotPasswordModal.value = false;
+                    forgotUsername.value = '';
+                    newResetPassword.value = '';
+                    newResetPasswordConfirm.value = '';
+                } else {
+                    alert(data.message || '密码重置失败');
+                }
+            } catch (e) {
+                alert('密码重置失败: ' + e.message);
+            }
+        };
+
+        const changePassword = async () => {
+            if (!oldPassword.value.trim()) {
+                alert('请输入当前密码');
+                return;
+            }
+            if (!newPassword.value.trim()) {
+                alert('请输入新密码');
+                return;
+            }
+            if (newPassword.value.length < 6) {
+                alert('新密码长度不能少于6位');
+                return;
+            }
+            if (newPassword.value !== newPasswordConfirm.value) {
+                alert('两次输入的新密码不一致');
+                return;
+            }
+            if (newPassword.value === oldPassword.value) {
+                alert('新密码不能与当前密码相同');
+                return;
+            }
+            try {
+                const response = await fetch(API_BASE + '/auth/change-password', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-User-Id': currentUserId.value
+                    },
+                    body: JSON.stringify({
+                        oldPassword: oldPassword.value,
+                        newPassword: newPassword.value
+                    })
+                });
+                const data = await response.json();
+                if (data.success) {
+                    alert('密码修改成功！');
+                    showSettingsModal.value = false;
+                    oldPassword.value = '';
+                    newPassword.value = '';
+                    newPasswordConfirm.value = '';
+                } else {
+                    alert(data.message);
+                }
+            } catch (e) {
+                alert('修改密码失败: ' + e.message);
+            }
+        };
+
+        const checkAutoLogin = async () => {
+            const savedUserId = localStorage.getItem('userId');
+            const savedUsername = localStorage.getItem('username');
+            if (savedUserId) {
+                currentUserId.value = parseInt(savedUserId);
+                currentUsername.value = savedUsername || '';
+                isLoggedIn.value = true;
+                showLoginModal.value = false;
+                
+                // 获取最新的剩余配额和API Key状态
+                try {
+                    const response = await fetch(API_BASE + '/auth/user-info/' + savedUserId);
+                    const data = await response.json();
+                    if (data.success) {
+                        // 同步API Key状态（只存储在后端）
+                        hasApiKey.value = data.hasApiKey;
+                        apiKeyInput.value = ''; // 不在前端显示
+                    }
+                } catch (error) {
+                    console.error('获取用户信息失败:', error);
+                }
+                
+                // 获取配额
+                try {
+                    const response = await fetch(API_BASE + '/auth/quota/' + savedUserId);
+                    const data = await response.json();
+                    if (data.success) {
+                        remainingQuota.value = data.remaining;
+                    }
+                } catch (error) {
+                    console.error('获取配额失败:', error);
+                }
             }
         };
 
@@ -644,8 +995,17 @@ createApp({
         });
 
         onMounted(async () => {
-            await init();
-            loadApiKey();
+            await checkAutoLogin();
+            if (isLoggedIn.value) {
+                await init();
+            } else {
+                // 未登录时才从localStorage加载API Key（用于下次登录）
+                const savedKey = localStorage.getItem('zhipu_api_key');
+                if (savedKey) {
+                    apiKeyInput.value = savedKey;
+                    hasApiKey.value = true;
+                }
+            }
         });
 
         return {
@@ -674,6 +1034,31 @@ createApp({
             showChatMenu,
             showApiKeyModal,
             apiKeyInput,
+            showApiKey,
+            hasApiKey,
+            saveApiKey,
+            deleteApiKey,
+            showLoginModal,
+            isLoggedIn,
+            isLoginMode,
+            authUsername,
+            authPassword,
+            authPasswordConfirm,
+            showAuthPassword,
+            showAuthPasswordConfirm,
+            showForgotPasswordModal,
+            forgotUsername,
+            newResetPassword,
+            newResetPasswordConfirm,
+            showNewPassword,
+            showNewPasswordConfirm,
+            currentUserId,
+            currentUsername,
+            remainingQuota,
+            showSettingsModal,
+            oldPassword,
+            newPassword,
+            newPasswordConfirm,
             searchCharacter,
             searchGroup,
             searchGroupMembers,
@@ -698,7 +1083,12 @@ createApp({
             toggleChatMenu,
             closeChatMenu,
             saveApiKey,
-            loadApiKey
+            loadApiKey,
+            login,
+            register,
+            logout,
+            resetPassword,
+            changePassword
         };
     }
 }).mount('#app');

@@ -1,10 +1,18 @@
 server:
   port: 8080
+  ssl:
+    enabled: true
+    key-store: classpath:aichat.p12
+    key-store-password: aichat2024
+    key-store-type: PKCS12
+    key-alias: aichat
   servlet:
     encoding:
       charset: UTF-8
       enabled: true
       force: true
+  http2:
+    enabled: true
 
 spring:
   profiles:

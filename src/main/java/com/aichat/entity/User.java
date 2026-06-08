@@ -19,6 +19,7 @@ public class User {
     private Integer dailyQuota;
     private Integer usedToday;
     private LocalDate lastResetDate;
+    private Long totalTokens;
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
 }

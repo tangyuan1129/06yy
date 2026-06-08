@@ -1,4 +1,4 @@
-﻿﻿<!DOCTYPE html>
+﻿﻿﻿<!DOCTYPE html>
 <html lang="zh-CN">
 <head>
     <meta charset="UTF-8">
@@ -6,7 +6,7 @@
     <title>角色聊天</title>
     <link rel="icon" href="data:,">
     
-    <script src="https://cdn.jsdelivr.net/npm/vue@3/dist/vue.global.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/vue@3/dist/vue.global.prod.js"></script>
 
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
@@ -822,15 +822,349 @@
         .disclaimer p {
             margin: 2px 0;
         }
+
+        /* 登录弹窗样式 */
+        .auth-modal {
+            width: 420px;
+            border-radius: 16px;
+            overflow: hidden;
+            box-shadow: 0 12px 48px rgba(0, 0, 0, 0.25);
+        }
+
+        .auth-modal .modal-header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            padding: 24px 20px;
+            border-bottom: none;
+        }
+
+        .auth-modal .modal-header h3 {
+            color: #fff;
+            font-size: 20px;
+            font-weight: 600;
+            margin: 0;
+        }
+
+        .auth-form {
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+            padding: 8px 0;
+        }
+
+        .auth-input {
+            width: 100%;
+            padding: 14px 16px;
+            border: 2px solid #e8e8e8;
+            border-radius: 10px;
+            font-size: 15px;
+            box-sizing: border-box;
+            transition: all 0.3s;
+            background: #fafafa;
+        }
+
+        .auth-input:focus {
+            outline: none;
+            border-color: #667eea;
+            background: #fff;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+
+        .auth-input::placeholder {
+            color: #bbb;
+        }
+
+        .password-input-wrapper {
+            position: relative;
+            width: 100%;
+        }
+
+        .password-input-wrapper .auth-input {
+            padding-right: 45px;
+        }
+
+        .eye-icon {
+            position: absolute;
+            right: 12px;
+            top: 50%;
+            transform: translateY(-50%);
+            cursor: pointer;
+            font-size: 18px;
+            user-select: none;
+            opacity: 0.6;
+            transition: opacity 0.2s;
+        }
+
+        .eye-icon:hover {
+            opacity: 1;
+        }
+
+        .auth-btn {
+            width: 100%;
+            padding: 14px;
+            border: none;
+            border-radius: 10px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            margin-top: 8px;
+        }
+
+        .auth-btn.primary {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: #fff;
+            box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
+        }
+
+        .auth-btn.primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(102, 126, 234, 0.5);
+        }
+
+        .auth-btn.primary:active {
+            transform: translateY(0);
+        }
+
+        .auth-switch {
+            text-align: center;
+            color: #667eea;
+            cursor: pointer;
+            font-size: 14px;
+            margin-top: 12px;
+            padding: 8px;
+            border-radius: 6px;
+            transition: background 0.2s;
+        }
+
+        .auth-switch:hover {
+            background: #f0f0ff;
+        }
+
+        /* 用户信息栏 */
+        .user-info-bar {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 10px 16px;
+            background: #f5f5f5;
+            border-bottom: 1px solid #e0e0e0;
+        }
+
+        .user-info-left {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .user-avatar-small {
+            width: 28px;
+            height: 28px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: #fff;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 14px;
+        }
+
+        .user-name-small {
+            font-size: 14px;
+            color: #333;
+            font-weight: 500;
+        }
+
+        .user-actions {
+            display: flex;
+            gap: 4px;
+        }
+
+        .user-action-btn {
+            background: none;
+            border: none;
+            cursor: pointer;
+            font-size: 16px;
+            padding: 4px 6px;
+            border-radius: 4px;
+            transition: background 0.2s;
+        }
+
+        .user-action-btn:hover {
+            background: #e0e0e0;
+        }
+
+        /* 设置弹窗样式 */
+        .settings-modal {
+            width: 400px;
+        }
+
+        .settings-section {
+            padding: 8px 0;
+        }
+
+        .settings-item {
+            margin-bottom: 16px;
+        }
+
+        .settings-item label {
+            display: block;
+            font-size: 13px;
+            color: #666;
+            margin-bottom: 6px;
+        }
+
+        .settings-input {
+            width: 100%;
+            padding: 10px 12px;
+            border: 1px solid #d9d9d9;
+            border-radius: 6px;
+            font-size: 14px;
+            box-sizing: border-box;
+        }
+
+        .settings-input:disabled {
+            background: #f5f5f5;
+            color: #999;
+        }
+
+        .settings-value {
+            font-size: 16px;
+            font-weight: 600;
+            color: #667eea;
+        }
+
+        .settings-divider {
+            height: 1px;
+            background: #e8e8e8;
+            margin: 20px 0;
+        }
+
+        .settings-section-title {
+            font-size: 15px;
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 16px;
+        }
+
+        .settings-btn {
+            width: 100%;
+            padding: 12px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: #fff;
+            border: none;
+            border-radius: 8px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            margin-top: 8px;
+        }
+
+        .settings-btn:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
+        }
+
+        .auth-divider {
+            display: flex;
+            align-items: center;
+            color: #999;
+            font-size: 13px;
+            margin: 4px 0;
+        }
+
+        .auth-divider::before,
+        .auth-divider::after {
+            content: '';
+            flex: 1;
+            height: 1px;
+            background: #e8e8e8;
+        }
+
+        .auth-divider::before {
+            margin-right: 12px;
+        }
+
+        .auth-divider::after {
+            margin-left: 12px;
+        }
     </style>
 </head>
 <body>
     <div id="app" v-cloak>
-        <div class="app-container">
+        <!-- 登录/注册弹窗 -->
+        <div class="modal-overlay" v-if="showLoginModal">
+            <div class="modal-content auth-modal" @click.stop>
+                <div class="modal-header">
+                    <h3>{{ isLoginMode ? '欢迎回来' : '创建账号' }}</h3>
+                </div>
+                <div class="modal-body">
+                    <form class="auth-form" autocomplete="off">
+                        <input type="text" v-model="authUsername" placeholder="请输入用户名" class="auth-input" autocomplete="username" />
+                        <div class="password-input-wrapper">
+                            <input :type="showAuthPassword ? 'text' : 'password'" v-model="authPassword" placeholder="请输入密码" class="auth-input" autocomplete="current-password" />
+                            <span class="eye-icon" @click="showAuthPassword = !showAuthPassword">{{ showAuthPassword ? '👁️' : '👁️‍🗨️' }}</span>
+                        </div>
+                        <div class="password-input-wrapper" v-show="!isLoginMode">
+                            <input :type="showAuthPasswordConfirm ? 'text' : 'password'" v-model="authPasswordConfirm" placeholder="请再次输入密码" class="auth-input" autocomplete="new-password" @keyup.enter="isLoginMode ? login() : register()" />
+                            <span class="eye-icon" @click="showAuthPasswordConfirm = !showAuthPasswordConfirm">{{ showAuthPasswordConfirm ? '👁️' : '👁️‍🗨️' }}</span>
+                        </div>
+                        <button type="button" class="auth-btn primary" @click="isLoginMode ? login() : register()">
+                            {{ isLoginMode ? '登 录' : '注 册' }}
+                        </button>
+                        <p class="auth-switch" v-if="isLoginMode" @click="showForgotPasswordModal = true">
+                            忘记密码？
+                        </p>
+                        <div class="auth-divider">或</div>
+                        <p class="auth-switch" @click="isLoginMode = !isLoginMode; authUsername = ''; authPassword = ''; authPasswordConfirm = ''">
+                            {{ isLoginMode ? '还没有账号？立即注册' : '已有账号？去登录' }}
+                        </p>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <!-- 忘记密码弹窗 -->
+        <div class="modal-overlay" v-if="showForgotPasswordModal">
+            <div class="modal-content auth-modal" @click.stop>
+                <div class="modal-header">
+                    <h3>重置密码</h3>
+                    <button class="modal-close" @click="showForgotPasswordModal = false">×</button>
+                </div>
+                <div class="modal-body">
+                    <form class="auth-form" autocomplete="off">
+                        <input type="text" v-model="forgotUsername" placeholder="请输入用户名" class="auth-input" autocomplete="username" />
+                        <div class="password-input-wrapper">
+                            <input :type="showNewPassword ? 'text' : 'password'" v-model="newResetPassword" placeholder="请输入新密码" class="auth-input" autocomplete="new-password" />
+                            <span class="eye-icon" @click="showNewPassword = !showNewPassword">👁️‍🗨️</span>
+                        </div>
+                        <div class="password-input-wrapper">
+                            <input :type="showNewPasswordConfirm ? 'text' : 'password'" v-model="newResetPasswordConfirm" placeholder="请再次输入新密码" class="auth-input" autocomplete="new-password" @keyup.enter="resetPassword()" />
+                            <span class="eye-icon" @click="showNewPasswordConfirm = !showNewPasswordConfirm">👁️‍🗨️</span>
+                        </div>
+                        <button type="button" class="auth-btn primary" @click="resetPassword()">
+                            重置密码
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <div class="app-container" v-if="isLoggedIn">
             <!-- 左侧联系人列表 -->
             <div class="sidebar">
                 <div class="sidebar-header">
                     💬 聊天
+                </div>
+                <div class="user-info-bar">
+                    <div class="user-info-left">
+                        <div class="user-avatar-small">👤</div>
+                        <div class="user-name-small">{{ currentUsername }}</div>
+                    </div>
+                    <div class="user-actions">
+                        <button class="user-action-btn" @click="showSettingsModal = true" title="账号设置">⚙️</button>
+                        <button class="user-action-btn" @click="logout" title="退出登录">🚪</button>
+                    </div>
                 </div>
                 <div class="tabs">
                     <div class="tab" :class="{ active: currentTab === 'single' }" @click="currentTab = 'single'">
@@ -843,7 +1177,7 @@
                 
                 <div class="contact-list" v-if="currentTab === 'single'">
                     <div class="search-container">
-                        <input type="text" class="search-input" v-model="searchCharacter" placeholder="搜索角色...">
+                        <input type="text" class="search-input" v-model="searchCharacter" placeholder="搜索角色..." autocomplete="off" data-form-type="other" readonly onfocus="this.removeAttribute('readonly')">
                     </div>
                     <div v-if="filteredCharacters.length === 0" class="no-results">
                         没有找到匹配的角色
@@ -933,11 +1267,14 @@
                 </div>
 
                 <div class="chat-input-container" v-if="chatType">
-                    <form @submit.prevent="sendMessage" class="chat-input-wrapper">
+                    <form @submit.prevent="sendMessage" class="chat-input-wrapper" autocomplete="off">
+                        <input type="text" style="display:none;position:absolute;left:-9999px;" autocomplete="off" />
                         <textarea id="chatInput"
                                   v-model="userInput"
                                   :disabled="isGenerating"
                                   placeholder="请输入消息..."
+                                  autocomplete="off"
+                                  name="chat_message"
                                   rows="1"></textarea>
                         <button type="submit" class="send-btn" :disabled="!userInput.trim() || isGenerating">
                             {{ isGenerating ? '发送中...' : '发送' }}
@@ -1066,6 +1403,65 @@
                     <button class="profile-btn secondary" @click="showProfileModal = false">关闭</button>
                     <button class="profile-btn primary" @click="startPrivateChat(selectedProfileCharacter)">发消息</button>
                     <button v-if="chatType === 'group'" class="profile-btn danger" @click="removeMemberFromGroup(selectedProfileCharacter)">移除群聊</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- 账号设置弹窗 -->
+        <div class="modal-overlay" v-if="showSettingsModal" @click.self="showSettingsModal = false">
+            <div class="modal settings-modal" @click.stop>
+                <div class="modal-header">
+                    <h3>账号设置</h3>
+                </div>
+                <div class="modal-body">
+                    <form class="settings-section" autocomplete="off" @submit.prevent>
+                        <div class="settings-item">
+                            <label>用户名</label>
+                            <input type="text" :value="currentUsername" disabled class="settings-input" />
+                        </div>
+                        <div class="settings-item" v-if="!hasApiKey">
+                            <label>今日剩余对话次数</label>
+                            <div class="settings-value">{{ remainingQuota }} 次</div>
+                        </div>
+                        <div class="settings-divider"></div>
+                        <div class="settings-section-title">API Key 设置</div>
+                        <div class="settings-item">
+                            <label>智谱AI API Key</label>
+                            <div style="position: relative;">
+                                <input :type="showApiKey ? 'text' : 'password'" v-model="apiKeyInput" placeholder="请输入你的智谱API Key（保存后不再显示）" class="settings-input" autocomplete="off" style="padding-right: 40px;" />
+                                <span style="position: absolute; right: 10px; top: 50%; transform: translateY(-50%); cursor: pointer; user-select: none; font-size: 16px;" @click="showApiKey = !showApiKey">{{ showApiKey ? '🙈' : '👁️' }}</span>
+                            </div>
+                            <p style="font-size: 11px; color: #999; margin-top: 4px;">🔒 API Key将安全存储在后端，不会保存在浏览器中</p>
+                        </div>
+                        <div style="display: flex; gap: 10px;">
+                            <button type="button" class="settings-btn" @click="saveApiKey">保存API Key</button>
+                            <button type="button" class="settings-btn" v-if="hasApiKey" @click="deleteApiKey" style="background: #e74c3c;">删除API Key</button>
+                        </div>
+                        <p style="font-size: 12px; color: #888; margin-top: 8px;" v-if="hasApiKey">
+                            💡 已配置API Key，对话次数不受限制
+                        </p>
+                        <p style="font-size: 12px; color: #888; margin-top: 8px;" v-else>
+                            💡 未配置API Key，将使用系统配置并消耗对话次数
+                        </p>
+                        <div class="settings-divider"></div>
+                        <div class="settings-section-title">修改密码</div>
+                        <div class="settings-item">
+                            <label>当前密码</label>
+                            <input type="password" v-model="oldPassword" placeholder="请输入当前密码" class="settings-input" autocomplete="current-password" />
+                        </div>
+                        <div class="settings-item">
+                            <label>新密码</label>
+                            <input type="password" v-model="newPassword" placeholder="请输入新密码" class="settings-input" autocomplete="new-password" />
+                        </div>
+                        <div class="settings-item">
+                            <label>确认新密码</label>
+                            <input type="password" v-model="newPasswordConfirm" placeholder="请再次输入新密码" class="settings-input" autocomplete="new-password" />
+                        </div>
+                        <button type="button" class="settings-btn" @click="changePassword">修改密码</button>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button class="modal-btn cancel" @click="showSettingsModal = false">关闭</button>
                 </div>
             </div>
         </div>
