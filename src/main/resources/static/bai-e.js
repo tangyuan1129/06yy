@@ -54,6 +54,11 @@ createApp({
         const oldPassword = ref('');
         const newPassword = ref('');
         const newPasswordConfirm = ref('');
+        
+        // 移动端状态管理
+        const isMobile = ref(false);
+        const sidebarVisible = ref(true);
+        const showMobileCharacterDetail = ref(false);
 
         // 获取角色头像URL的辅助函数
         const getCharacterAvatar = (characterId) => {
@@ -273,6 +278,12 @@ createApp({
             currentGroupId.value = null;
             messages.value = [];
             status.value = '';
+            
+            // 移动端自动隐藏侧边栏
+            if (isMobile.value) {
+                sidebarVisible.value = false;
+            }
+            
             await loadCharacterConversation(character.id);
         };
 
@@ -284,9 +295,25 @@ createApp({
             currentCharacterId.value = null;
             messages.value = [];
             status.value = '';
+            
+            // 移动端自动隐藏侧边栏
+            if (isMobile.value) {
+                sidebarVisible.value = false;
+            }
+            
             await loadGroupMembers(group.id);
             currentGroupMembers.value = groupMemberCache.value[group.id] || [];
             await loadGroupConversation(group.id);
+        };
+
+        // 显示侧边栏（移动端）
+        const showSidebar = () => {
+            sidebarVisible.value = true;
+        };
+
+        // 关闭移动端角色详情
+        const closeMobileCharacterDetail = () => {
+            showMobileCharacterDetail.value = false;
         };
 
         // 加载群聊会话
@@ -490,6 +517,18 @@ createApp({
             }
             messages.value = [];
             showChatMenu.value = false;
+            status.value = '聊天记录已清空';
+            setTimeout(() => {
+                status.value = '';
+            }, 2000);
+        };
+
+        const clearChatWithConfirm = async () => {
+            if (!confirm('确定要清空与该角色的聊天记录吗？此操作不可恢复。')) {
+                return;
+            }
+            messages.value = [];
+            showMobileCharacterDetail.value = false;
             status.value = '聊天记录已清空';
             setTimeout(() => {
                 status.value = '';
@@ -1006,6 +1045,17 @@ createApp({
                     hasApiKey.value = true;
                 }
             }
+            
+            // 检测是否为移动端
+            const checkMobile = () => {
+                isMobile.value = window.innerWidth <= 768;
+                if (!isMobile.value) {
+                    sidebarVisible.value = true;
+                }
+            };
+            
+            checkMobile();
+            window.addEventListener('resize', checkMobile);
         });
 
         return {
@@ -1071,6 +1121,7 @@ createApp({
             selectGroup,
             sendMessage,
             clearChat,
+            clearChatWithConfirm,
             isCharacterSelectedForGroup,
             toggleCharacterSelection,
             createGroup,
@@ -1088,7 +1139,12 @@ createApp({
             register,
             logout,
             resetPassword,
-            changePassword
+            changePassword,
+            isMobile,
+            sidebarVisible,
+            showSidebar,
+            showMobileCharacterDetail,
+            closeMobileCharacterDetail
         };
     }
 }).mount('#app');

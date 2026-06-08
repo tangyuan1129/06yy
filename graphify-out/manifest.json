@@ -1,0 +1,447 @@
+{
+  "deploy-aliyun.sh": {
+    "mtime": 1780824561.495393,
+    "ast_hash": "1394171cfbb5959bafff217591bc0e85",
+    "semantic_hash": ""
+  },
+  "deploy.sh": {
+    "mtime": 1780827742.159868,
+    "ast_hash": "a0f777f21d189e2c74b574c1d22b727e",
+    "semantic_hash": ""
+  },
+  "mvnw": {
+    "mtime": 1780480944.2690322,
+    "ast_hash": "ab50dd89da7da2346b28003352eeeeeb",
+    "semantic_hash": ""
+  },
+  "src/main/java/com/aichat/AiChatApplication.java": {
+    "mtime": 1780765138.339628,
+    "ast_hash": "cd8896d00480d7e7f898d423ca34d7ac",
+    "semantic_hash": ""
+  },
+  "src/main/java/com/aichat/config/CorsConfig.java": {
+    "mtime": 1780850245.175925,
+    "ast_hash": "6900a14c12d7becf3b204bc046aeb4c8",
+    "semantic_hash": ""
+  },
+  "src/main/java/com/aichat/config/EncodingConfig.java": {
+    "mtime": 1780803871.782487,
+    "ast_hash": "38427b54c895b73f70dd35ae463f53e0",
+    "semantic_hash": ""
+  },
+  "src/main/java/com/aichat/config/GlobalExceptionHandler.java": {
+    "mtime": 1780850663.324769,
+    "ast_hash": "faa84c7669ba3586e4b66d361e562d1b",
+    "semantic_hash": ""
+  },
+  "src/main/java/com/aichat/config/GroupChatConfig.java": {
+    "mtime": 1780819300.171947,
+    "ast_hash": "90344733c5d855d3e8ed1b839978b13e",
+    "semantic_hash": ""
+  },
+  "src/main/java/com/aichat/config/LlmConfig.java": {
+    "mtime": 1780850746.371595,
+    "ast_hash": "98415d31963ee5a784ac7d7e7d47c7a3",
+    "semantic_hash": ""
+  },
+  "src/main/java/com/aichat/config/MyMetaObjectHandler.java": {
+    "mtime": 1780744943.2508597,
+    "ast_hash": "8afe86fa77e9fdd114451de7c929307d",
+    "semantic_hash": ""
+  },
+  "src/main/java/com/aichat/config/RateLimitConfig.java": {
+    "mtime": 1780850681.6408718,
+    "ast_hash": "75b6c5ba618dbdcb6693193fad83fac7",
+    "semantic_hash": ""
+  },
+  "src/main/java/com/aichat/config/SecurityConfig.java": {
+    "mtime": 1780889890.8338923,
+    "ast_hash": "ba6b2758d6e2cdf511f52cbb68beaf37",
+    "semantic_hash": ""
+  },
+  "src/main/java/com/aichat/config/SwaggerConfig.java": {
+    "mtime": 1780889876.4866526,
+    "ast_hash": "51983ff230b3657836d7c5c0c8f92828",
+    "semantic_hash": ""
+  },
+  "src/main/java/com/aichat/config/WebClientConfig.java": {
+    "mtime": 1780640883.6716893,
+    "ast_hash": "1dcad6fa07d9785ce2807f689745c4a6",
+    "semantic_hash": ""
+  },
+  "src/main/java/com/aichat/config/WebMvcConfig.java": {
+    "mtime": 1780803892.572222,
+    "ast_hash": "aab9ac3720ab1876be15b9df7b28a9ca",
+    "semantic_hash": ""
+  },
+  "src/main/java/com/aichat/controller/AuthController.java": {
+    "mtime": 1780889947.0664406,
+    "ast_hash": "135b061928423aa4b8d51c9f6dc6b600",
+    "semantic_hash": ""
+  },
+  "src/main/java/com/aichat/controller/CharacterController.java": {
+    "mtime": 1780890003.264323,
+    "ast_hash": "e64fac8c128192d963338e04390ee6a1",
+    "semantic_hash": ""
+  },
+  "src/main/java/com/aichat/controller/ChatController.java": {
+    "mtime": 1780889979.9891987,
+    "ast_hash": "4eded10cc0eb70fd002c5680b3d1a2dd",
+    "semantic_hash": ""
+  },
+  "src/main/java/com/aichat/controller/DatabaseCleanupController.java": {
+    "mtime": 1780835883.4949276,
+    "ast_hash": "c088f4e82cf31be504db6ae1520ebb86",
+    "semantic_hash": ""
+  },
+  "src/main/java/com/aichat/controller/DatabaseFixController.java": {
+    "mtime": 1780836116.2990644,
+    "ast_hash": "351403db21d6b3fec9e3f8f4eaa89fb8",
+    "semantic_hash": ""
+  },
+  "src/main/java/com/aichat/controller/DatabaseInitController.java": {
+    "mtime": 1780749687.18917,
+    "ast_hash": "d41d8cd98f00b204e9800998ecf8427e",
+    "semantic_hash": ""
+  },
+  "src/main/java/com/aichat/controller/FaviconController.java": {
+    "mtime": 1780716803.1080394,
+    "ast_hash": "c5f18d92d53ffefb37d98ece4f7c499c",
+    "semantic_hash": ""
+  },
+  "src/main/java/com/aichat/controller/GroupChatController.java": {
+    "mtime": 1780836187.9109883,
+    "ast_hash": "9dafb2c72561b5fc44c34c3f1b6e2846",
+    "semantic_hash": ""
+  },
+  "src/main/java/com/aichat/controller/HealthController.java": {
+    "mtime": 1780850783.1757314,
+    "ast_hash": "a3c9616142359f2f5551d4ba83e05f7f",
+    "semantic_hash": ""
+  },
+  "src/main/java/com/aichat/controller/HomeController.java": {
+    "mtime": 1780716942.4265082,
+    "ast_hash": "f5351789179b58aaf4c6d9252a60427f",
+    "semantic_hash": ""
+  },
+  "src/main/java/com/aichat/controller/InitController.java": {
+    "mtime": 1780836289.089699,
+    "ast_hash": "365f0c8d937aa21ffb192fc3de165197",
+    "semantic_hash": ""
+  },
+  "src/main/java/com/aichat/dto/ChatRequest.java": {
+    "mtime": 1780844226.2679281,
+    "ast_hash": "acfe13366df7f6e874f182a75846e06f",
+    "semantic_hash": ""
+  },
+  "src/main/java/com/aichat/dto/GroupChatRequest.java": {
+    "mtime": 1780837677.6713598,
+    "ast_hash": "972c3b98bfa5839fb3e5c47ed3d72001",
+    "semantic_hash": ""
+  },
+  "src/main/java/com/aichat/entity/ActiveMessageCount.java": {
+    "mtime": 1780764894.693528,
+    "ast_hash": "3934a0968c1191d6a9d834813287207b",
+    "semantic_hash": ""
+  },
+  "src/main/java/com/aichat/entity/Character.java": {
+    "mtime": 1780744895.8097277,
+    "ast_hash": "3ce2f7010974d9bf720afe8cb2c09c3f",
+    "semantic_hash": ""
+  },
+  "src/main/java/com/aichat/entity/ChatLog.java": {
+    "mtime": 1780837989.7891228,
+    "ast_hash": "4afbfb59bc19033fed96b0e25566f9af",
+    "semantic_hash": ""
+  },
+  "src/main/java/com/aichat/entity/Conversation.java": {
+    "mtime": 1780841759.710512,
+    "ast_hash": "da11f4736b070838bbdc6a668191da38",
+    "semantic_hash": ""
+  },
+  "src/main/java/com/aichat/entity/GroupChat.java": {
+    "mtime": 1780744907.617092,
+    "ast_hash": "96abd43fc2d4d4b5a8925523c4f8200a",
+    "semantic_hash": ""
+  },
+  "src/main/java/com/aichat/entity/GroupMember.java": {
+    "mtime": 1780744924.984472,
+    "ast_hash": "75c884ddaaa355cb6b836e598e1fff52",
+    "semantic_hash": ""
+  },
+  "src/main/java/com/aichat/entity/InnerMonologue.java": {
+    "mtime": 1780764885.3864436,
+    "ast_hash": "1ce8e897f43ca04d6003df8f85b8feaf",
+    "semantic_hash": ""
+  },
+  "src/main/java/com/aichat/entity/Message.java": {
+    "mtime": 1780841747.2913723,
+    "ast_hash": "7e01faeb14124a77f7a8a1edac32fd1f",
+    "semantic_hash": ""
+  },
+  "src/main/java/com/aichat/entity/SensitiveWord.java": {
+    "mtime": 1780838007.5495853,
+    "ast_hash": "751d283e97cd491c0bf0d7793884f9ef",
+    "semantic_hash": ""
+  },
+  "src/main/java/com/aichat/entity/User.java": {
+    "mtime": 1780850825.6094203,
+    "ast_hash": "c3bc9dae3b00546bd3707346baba1d81",
+    "semantic_hash": ""
+  },
+  "src/main/java/com/aichat/mapper/CharacterMapper.java": {
+    "mtime": 1780715645.5562317,
+    "ast_hash": "51c520a8ab13121b438558b8995b373b",
+    "semantic_hash": ""
+  },
+  "src/main/java/com/aichat/mapper/ChatLogMapper.java": {
+    "mtime": 1780838014.5632384,
+    "ast_hash": "f8a8adc3030282d4746b4491724e0f32",
+    "semantic_hash": ""
+  },
+  "src/main/java/com/aichat/mapper/ConversationMapper.java": {
+    "mtime": 1780490707.3928206,
+    "ast_hash": "cec14e0d08456e7ad1f0b5772f405b17",
+    "semantic_hash": ""
+  },
+  "src/main/java/com/aichat/mapper/GroupChatMapper.java": {
+    "mtime": 1780729648.4535027,
+    "ast_hash": "9b35ba024d5e831c4c1ff317e06a7882",
+    "semantic_hash": ""
+  },
+  "src/main/java/com/aichat/mapper/GroupMemberMapper.java": {
+    "mtime": 1780729658.0109613,
+    "ast_hash": "594a18d238a3e9219b76162e8bf62743",
+    "semantic_hash": ""
+  },
+  "src/main/java/com/aichat/mapper/MessageMapper.java": {
+    "mtime": 1780490711.2977302,
+    "ast_hash": "54d8154ae1c2b6903a43284d54583c2b",
+    "semantic_hash": ""
+  },
+  "src/main/java/com/aichat/mapper/SensitiveWordMapper.java": {
+    "mtime": 1780838022.3149972,
+    "ast_hash": "6cde1ccec49a358fb4bdba7309b290da",
+    "semantic_hash": ""
+  },
+  "src/main/java/com/aichat/mapper/UserMapper.java": {
+    "mtime": 1780837940.3926208,
+    "ast_hash": "4a0c7697d944da81372ee11e0518148f",
+    "semantic_hash": ""
+  },
+  "src/main/java/com/aichat/service/CharacterService.java": {
+    "mtime": 1780718810.571463,
+    "ast_hash": "8d2edf73522c370c0eda9dc242bcf9fc",
+    "semantic_hash": ""
+  },
+  "src/main/java/com/aichat/service/ChatLogService.java": {
+    "mtime": 1780837972.104805,
+    "ast_hash": "efd40fd66e654bce2b35485b6373cea9",
+    "semantic_hash": ""
+  },
+  "src/main/java/com/aichat/service/ChatService.java": {
+    "mtime": 1780898347.4083302,
+    "ast_hash": "93eaf2b7b489b66d76f69130e53ffb12",
+    "semantic_hash": ""
+  },
+  "src/main/java/com/aichat/service/ConversationService.java": {
+    "mtime": 1780720189.8656166,
+    "ast_hash": "03ba931842055ed4638cd9c2717e5ba6",
+    "semantic_hash": ""
+  },
+  "src/main/java/com/aichat/service/GateControlService.java": {
+    "mtime": 1780823234.1869116,
+    "ast_hash": "17a33eb33a62d9a51f0cb0b56b2e4304",
+    "semantic_hash": ""
+  },
+  "src/main/java/com/aichat/service/GroupChatService.java": {
+    "mtime": 1780745977.6739328,
+    "ast_hash": "2ff7b6fb962cf3f6737c4b500bf9474c",
+    "semantic_hash": ""
+  },
+  "src/main/java/com/aichat/service/InnerMonologueService.java": {
+    "mtime": 1780764929.492372,
+    "ast_hash": "1c05b1c29445bd32e71fb2a6a21b5c01",
+    "semantic_hash": ""
+  },
+  "src/main/java/com/aichat/service/LLMService.java": {
+    "mtime": 1780851094.7728117,
+    "ast_hash": "e61a15f393248479e836dd2d6a1e5274",
+    "semantic_hash": ""
+  },
+  "src/main/java/com/aichat/service/LifeTickService.java": {
+    "mtime": 1780764999.1994877,
+    "ast_hash": "a9162615de7500261e1eca2cacd62819",
+    "semantic_hash": ""
+  },
+  "src/main/java/com/aichat/service/MessageService.java": {
+    "mtime": 1780719800.637763,
+    "ast_hash": "8290fd57d35c677e163258779a9d49f4",
+    "semantic_hash": ""
+  },
+  "src/main/java/com/aichat/service/QuotaResetService.java": {
+    "mtime": 1780845688.675149,
+    "ast_hash": "483cd2b6ff90483e7ca28769193c78b7",
+    "semantic_hash": ""
+  },
+  "src/main/java/com/aichat/service/SensitiveWordService.java": {
+    "mtime": 1780837981.3290715,
+    "ast_hash": "6715e1cc96be22e8536d38403daf8f33",
+    "semantic_hash": ""
+  },
+  "src/main/java/com/aichat/service/UserService.java": {
+    "mtime": 1780887838.1416314,
+    "ast_hash": "a14fd9e36ccc2707611cd059540874c4",
+    "semantic_hash": ""
+  },
+  "src/main/java/com/aichat/util/AESUtil.java": {
+    "mtime": 1780850391.1139536,
+    "ast_hash": "b5c8b3b91b8392b6f48461f1f48a2d6e",
+    "semantic_hash": ""
+  },
+  "src/main/java/com/aichat/util/DatabaseInitializer.java": {
+    "mtime": 1780852205.5033295,
+    "ast_hash": "2dd2dbe73f79f6d066ace13473cb1a7b",
+    "semantic_hash": ""
+  },
+  "src/main/java/com/aichat/util/PasswordGenerator.java": {
+    "mtime": 1780852187.767655,
+    "ast_hash": "b28253635e6e0675d50eed24f79262e8",
+    "semantic_hash": ""
+  },
+  "src/main/resources/init.sql": {
+    "mtime": 1780758764.0875168,
+    "ast_hash": "8ba338c525c95d2600e1224710f9fe57",
+    "semantic_hash": ""
+  },
+  "src/main/resources/init_character.sql": {
+    "mtime": 1780715332.770149,
+    "ast_hash": "bc5c4d3597c9eabd136323fb129b1220",
+    "semantic_hash": ""
+  },
+  "src/main/resources/insert_hsr_characters.sql": {
+    "mtime": 1780767596.6040292,
+    "ast_hash": "cdccf07d251ffb39549a2abeaf974f40",
+    "semantic_hash": ""
+  },
+  "src/main/resources/schema.sql": {
+    "mtime": 1780850812.3434384,
+    "ast_hash": "77d50beae3cafdf5e419827489f51087",
+    "semantic_hash": ""
+  },
+  "src/main/resources/static/bai-e.js": {
+    "mtime": 1780898383.9985266,
+    "ast_hash": "6fe0b76f6aef28d04719191507694537",
+    "semantic_hash": ""
+  },
+  "src/main/resources/update_avatar.sql": {
+    "mtime": 1780807015.2837987,
+    "ast_hash": "8daa7cc0923a42c468567f89911d237c",
+    "semantic_hash": ""
+  },
+  "src/test/java/com/yourgame/six_springboot/SixSpringbootApplicationTests.java": {
+    "mtime": 1780480944.263792,
+    "ast_hash": "e83db93708677b041e81f727795769ba",
+    "semantic_hash": ""
+  },
+  ".github/workflows/alibabacloud.yml": {
+    "mtime": 1780714371.6640706,
+    "ast_hash": "8deb61b7125c32fa460a3f8622c4d06b",
+    "semantic_hash": ""
+  },
+  ".github/workflows/deploy.yml": {
+    "mtime": 1780827752.1742127,
+    "ast_hash": "00eda267bb430f196d2e70c1ecfd6f15",
+    "semantic_hash": ""
+  },
+  "DEPLOY-ALIYUN.md": {
+    "mtime": 1780824597.1385293,
+    "ast_hash": "f1774ebe2dc3e10b28dee7b89f90e5b9",
+    "semantic_hash": ""
+  },
+  "src/main/resources/application-example.yml": {
+    "mtime": 1780659795.0559964,
+    "ast_hash": "d78de8ca84c289d2e236c640dc93f446",
+    "semantic_hash": ""
+  },
+  "src/main/resources/application.yml": {
+    "mtime": 1780850564.5993893,
+    "ast_hash": "48221c40256f5bd24b37b2385565d378",
+    "semantic_hash": ""
+  },
+  "src/main/resources/static/bai-e.html": {
+    "mtime": 1780897823.5683334,
+    "ast_hash": "d96bdfad42f562c6413d4fc02145d0e9",
+    "semantic_hash": ""
+  },
+  "src/main/resources/static/images/ChatAvatar/\u4e07\u654c\u804a\u5929\u5934\u50cf.jpg": {
+    "mtime": 1780815720.7027235,
+    "ast_hash": "84eb4a85c871271cb746b7fde16688af",
+    "semantic_hash": ""
+  },
+  "src/main/resources/static/images/ChatAvatar/\u4e09\u6708\u4e03\u804a\u5929\u5934\u50cf.png": {
+    "mtime": 1780818601.4476979,
+    "ast_hash": "cd03caee88197c776c2afd0daaa0b786",
+    "semantic_hash": ""
+  },
+  "src/main/resources/static/images/ChatAvatar/\u523b\u5f8b\u5fb7\u62c9\u804a\u5929\u5934\u50cf.jpg": {
+    "mtime": 1780815901.7769945,
+    "ast_hash": "e03e3ca4ddf72f80aec17f3c4fa599cb",
+    "semantic_hash": ""
+  },
+  "src/main/resources/static/images/ChatAvatar/\u6614\u6d9f\u804a\u5929\u5934\u50cf.jpg": {
+    "mtime": 1780815927.5430927,
+    "ast_hash": "7052d4941f65a35ca443e06e9f6b4ad2",
+    "semantic_hash": ""
+  },
+  "src/main/resources/static/images/ChatAvatar/\u661f\u804a\u5929\u5934\u50cf.jpg": {
+    "mtime": 1780815719.1260002,
+    "ast_hash": "7df5453909f7508931a457b6071b3e96",
+    "semantic_hash": ""
+  },
+  "src/main/resources/static/images/ChatAvatar/\u6d77\u745f\u97f3\u804a\u5929\u5934\u50cf.jpg": {
+    "mtime": 1780815927.4923022,
+    "ast_hash": "c3cb43a933c923804669dce9d7a4b9dc",
+    "semantic_hash": ""
+  },
+  "src/main/resources/static/images/ChatAvatar/\u767d\u5384\u804a\u5929\u5934\u50cf.jpg": {
+    "mtime": 1780814909.585472,
+    "ast_hash": "5defb46697e4a0bd04890899443dee5d",
+    "semantic_hash": ""
+  },
+  "src/main/resources/static/images/ChatAvatar/\u7f07\u5b9d\u804a\u5929\u5934\u50cf.jpg": {
+    "mtime": 1780815927.5255938,
+    "ast_hash": "aab2bb76ce5a732faca1a46cd192926a",
+    "semantic_hash": ""
+  },
+  "src/main/resources/static/images/ChatAvatar/\u8d5b\u98de\u513f\u804a\u5929\u5934\u50cf.jpg": {
+    "mtime": 1780813126.6862364,
+    "ast_hash": "5afd458097adadf6ce301111b0f980ab",
+    "semantic_hash": ""
+  },
+  "src/main/resources/static/images/ChatAvatar/\u9050\u8776\u804a\u5929\u5934\u50cf.jpg": {
+    "mtime": 1780815903.6478279,
+    "ast_hash": "9238628f684130ccbbad8391222de24d",
+    "semantic_hash": ""
+  },
+  "src/main/resources/static/images/ChatAvatar/\u90a3\u523b\u590f\u804a\u5929\u5934\u50cf.jpg": {
+    "mtime": 1780815927.5265892,
+    "ast_hash": "08e32fcb7e5cf2de667cdb88cc8230cc",
+    "semantic_hash": ""
+  },
+  "src/main/resources/static/images/ChatAvatar/\u963f\u683c\u83b1\u96c5\u804a\u5929\u5934\u50cf.jpg": {
+    "mtime": 1780815721.6607237,
+    "ast_hash": "02bf7e4e6d64882231ca1b1f3fc5b2d9",
+    "semantic_hash": ""
+  },
+  "src/main/resources/static/images/ChatAvatar/\u98ce\u5807.jpg": {
+    "mtime": 1780815719.816696,
+    "ast_hash": "c624126e09cf19bfc07dbb325fee95b8",
+    "semantic_hash": ""
+  },
+  "src/main/resources/static/images/ChatBackground/\u767d\u5384.jpg": {
+    "mtime": 1780672106.5229988,
+    "ast_hash": "8b592252deb29783d1c042eaf6779412",
+    "semantic_hash": ""
+  }
+}

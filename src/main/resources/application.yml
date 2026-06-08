@@ -1,5 +1,6 @@
 server:
   port: 8080
+  address: 0.0.0.0
   ssl:
     enabled: true
     key-store: classpath:aichat.p12
