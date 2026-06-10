@@ -513,9 +513,9 @@
             }
 
             .group-members-list {
-                display: flex;
-                flex-wrap: wrap;
-                gap: 10px;
+                display: grid;
+                grid-template-columns: repeat(4, 1fr);
+                gap: 12px 8px;
             }
 
             .group-member-item {
@@ -523,11 +523,12 @@
                 display: flex;
                 flex-direction: column;
                 align-items: center;
+                justify-content: flex-start;
             }
 
             .group-member-avatar {
-                width: 50px;
-                height: 50px;
+                width: 48px;
+                height: 48px;
                 border-radius: 50%;
                 background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
                 display: flex;
@@ -540,6 +541,7 @@
                 transition: transform 0.2s;
                 overflow: visible;
                 position: relative;
+                margin: 0 auto;
             }
 
             .group-member-avatar:hover {
@@ -591,9 +593,14 @@
 
             .member-name {
                 text-align: center;
-                font-size: 12px;
+                font-size: 11px;
                 color: #666;
-                margin-top: 5px;
+                margin-top: 4px;
+                width: 100%;
+                overflow: hidden;
+                text-overflow: ellipsis;
+                white-space: nowrap;
+                line-height: 1.3;
             }
 
             .add-member-section {
@@ -1089,17 +1096,22 @@
 
             /* 群成员网格适配 */
             .group-members-list {
-                gap: 8px;
+                grid-template-columns: repeat(3, 1fr);
+                gap: 8px 6px;
             }
 
             .group-member-avatar {
-                width: 45px;
-                height: 45px;
-                font-size: 16px;
+                width: 42px;
+                height: 42px;
+                font-size: 15px;
+                margin: 0 auto;
             }
 
             .member-name {
-                font-size: 11px;
+                font-size: 10px;
+                white-space: nowrap;
+                overflow: hidden;
+                text-overflow: ellipsis;
             }
 
             .select-member {
@@ -1746,17 +1758,19 @@
         }
 
         .character-option {
-            padding: 14px 8px;
+            padding: 12px 6px;
             background: white;
             border: 2px solid #e0e0e0;
             border-radius: 8px;
             cursor: pointer;
             transition: all 0.2s;
             text-align: center;
-            min-height: 48px;
+            min-height: 44px;
             display: flex;
             align-items: center;
             justify-content: center;
+            width: 100%;
+            box-sizing: border-box;
         }
 
         .character-option:hover {
@@ -1771,10 +1785,12 @@
         }
 
         .character-option-name {
-            font-size: 13px;
+            font-size: 12px;
             font-weight: 500;
             word-break: break-word;
-            line-height: 1.4;
+            line-height: 1.3;
+            text-align: center;
+            width: 100%;
         }
 
         .modal-buttons {
@@ -2205,13 +2221,15 @@
             }
 
             .character-option {
-                padding: 8px;
+                padding: 8px 4px;
+                min-height: 40px;
             }
 
             .character-option-name {
-                font-size: 12px;
+                font-size: 11px;
                 word-break: break-word;
                 line-height: 1.3;
+                text-align: center;
             }
 
             .modal-buttons {
