@@ -99,20 +99,5 @@ public class DatabaseInitializer implements CommandLineRunner {
         } catch (Exception e) {
             System.err.println("⚠️ 用户配额初始化失败: " + e.getMessage());
         }
-
-        // 重置所有用户密码为 123456 (BCrypt 加密)
-        try {
-            org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder encoder = 
-                new org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder();
-            String bcryptHash = encoder.encode("123456");
-            int count = jdbcTemplate.update(
-                "UPDATE user SET password = ?", 
-                bcryptHash
-            );
-            System.out.println("✅ 所有用户密码已重置为 123456，共 " + count + " 个用户");
-            System.out.println("✅ 新密码Hash: " + bcryptHash);
-        } catch (Exception e) {
-            System.err.println("⚠️ 密码重置失败: " + e.getMessage());
-        }
     }
 }

@@ -38,9 +38,6 @@ public class GroupChatController {
         return groupChatService.getGroupMembers(id);
     }
 
-    // ⚠️ 写操作已禁用 - 生产环境不应提供群聊增删改接口
-    // 如需管理群聊，请直接操作数据库
-/*
     @PostMapping
     public GroupChat createGroup(@RequestBody Map<String, Object> request) {
         log.info("创建群聊请求: {}", request);
@@ -86,9 +83,14 @@ public class GroupChatController {
         groupChatService.removeMemberFromGroup(id, characterId);
     }
 
+    @DeleteMapping("/{id}/messages")
+    public void clearGroupMessages(@PathVariable Long id) {
+        log.info("清空群聊消息: groupId={}", id);
+        groupChatService.clearGroupMessages(id);
+    }
+
     @DeleteMapping("/{id}")
     public void deleteGroup(@PathVariable Long id) {
         groupChatService.deleteGroup(id);
     }
-*/
 }

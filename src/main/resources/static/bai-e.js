@@ -1063,6 +1063,32 @@ createApp({
             }
         };
 
+        const removeMemberDirectly = async (member) => {
+            if (!confirm(`确定要将 ${member.name} 移出群聊吗？`)) {
+                return;
+            }
+
+            try {
+                const response = await fetch(API_BASE + '/groups/' + currentGroupId.value + '/members/' + member.id, {
+                    method: 'DELETE'
+                });
+
+                if (!response.ok) {
+                    throw new Error('HTTP错误: ' + response.status);
+                }
+
+                await loadGroupMembers(currentGroupId.value);
+                currentGroupMembers.value = groupMemberCache.value[currentGroupId.value] || [];
+                status.value = `已将 ${member.name} 移出群聊`;
+                setTimeout(() => {
+                    status.value = '';
+                }, 2000);
+            } catch (error) {
+                console.error('移除成员失败:', error);
+                alert('移除成员失败: ' + error.message);
+            }
+        };
+
         const scrollToBottom = async () => {
             await nextTick();
             if (messagesContainer.value) {
@@ -1179,6 +1205,7 @@ createApp({
             showCharacterProfile,
             startPrivateChat,
             removeMemberFromGroup,
+            removeMemberDirectly,
             toggleChatMenu,
             closeChatMenu,
             saveApiKey,

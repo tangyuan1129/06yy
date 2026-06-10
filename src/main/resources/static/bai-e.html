@@ -2,7 +2,7 @@
 <html lang="zh-CN">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="mobile-web-app-capable" content="yes">
     <title>角色聊天</title>
@@ -518,6 +518,13 @@
                 gap: 10px;
             }
 
+            .group-member-item {
+                position: relative;
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+            }
+
             .group-member-avatar {
                 width: 50px;
                 height: 50px;
@@ -531,11 +538,42 @@
                 font-weight: bold;
                 cursor: pointer;
                 transition: transform 0.2s;
-                overflow: hidden;
+                overflow: visible;
+                position: relative;
             }
 
             .group-member-avatar:hover {
                 transform: scale(1.1);
+            }
+
+            .group-member-avatar:hover .remove-member-btn {
+                display: flex;
+            }
+
+            .remove-member-btn {
+                display: none;
+                position: absolute;
+                top: -5px;
+                right: -5px;
+                width: 20px;
+                height: 20px;
+                border-radius: 50%;
+                background: #ff4d4f;
+                color: white;
+                border: 2px solid white;
+                font-size: 16px;
+                line-height: 1;
+                cursor: pointer;
+                align-items: center;
+                justify-content: center;
+                transition: all 0.2s;
+                z-index: 10;
+                padding: 0;
+            }
+
+            .remove-member-btn:hover {
+                background: #ff7875;
+                transform: scale(1.2);
             }
 
             .group-member-avatar img {
@@ -2742,10 +2780,11 @@
 
                 <div v-if="chatType === 'group'">
                     <div class="group-members-list">
-                        <div v-for="member in currentGroupMembers" :key="member.id">
+                        <div v-for="member in currentGroupMembers" :key="member.id" class="group-member-item">
                             <div class="group-member-avatar" @click="showCharacterProfile(member)">
                                 <img v-if="member.avatarUrl" :src="member.avatarUrl" :alt="member.name">
                                 <span v-else>{{ member.name.charAt(0) }}</span>
+                                <button class="remove-member-btn" @click.stop="removeMemberDirectly(member)" title="移除成员">×</button>
                             </div>
                             <div class="member-name">{{ member.name }}</div>
                         </div>

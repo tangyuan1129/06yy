@@ -95,6 +95,16 @@ public class GroupChatService {
     }
 
     @Transactional
+    public void clearGroupMessages(Long groupId) {
+        log.info("清空群聊消息: groupId={}", groupId);
+        int count = messageMapper.delete(
+            new LambdaQueryWrapper<com.aichat.entity.Message>()
+                .eq(com.aichat.entity.Message::getGroupId, groupId)
+        );
+        log.info("已清空 {} 条群聊消息", count);
+    }
+
+    @Transactional
     public void deleteGroup(Long id) {
         log.info("开始解散群聊: groupId={}", id);
         
