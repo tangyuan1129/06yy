@@ -7,7 +7,7 @@ import com.aichat.service.ChatService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
-import lombok.RequiredArgsConstructor;
+import lombok.RequiredArgsConstructor;import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 
@@ -18,6 +18,7 @@ import java.util.Map;
 @RestController
 @RequestMapping("/api")	
 @RequiredArgsConstructor
+@Slf4j
 @Tag(name = "聊天管理", description = "单聊、群聊、消息历史等接口")
 public class ChatController {
 
@@ -64,5 +65,17 @@ public class ChatController {
 			@PathVariable Long characterId,
 			@RequestParam(required = false) Long userId) {
 		return chatService.getMessagesByCharacter(characterId, userId);
+	}
+	@DeleteMapping("/messages/character/{characterId}")
+	@Operation(summary = "清空单聊消息", description = "清空与指定角色的所有聊天记录")
+	public Map<String, Object> clearCharacterMessages(
+			@PathVariable Long characterId,
+			@RequestParam(required = false) Long userId) {
+		log.info("清空单聊消息: characterId={}, userId={}", characterId, userId);
+		chatService.clearCharacterMessages(characterId, userId);
+		Map<String, Object> result = new HashMap<>();
+		result.put("success", true);
+		result.put("message", "聊天记录已清空");
+		return result;
 	}
 }

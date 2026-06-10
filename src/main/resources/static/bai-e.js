@@ -515,24 +515,72 @@ createApp({
             if (!confirm('确定要清空聊天记录吗？')) {
                 return;
             }
-            messages.value = [];
-            showChatMenu.value = false;
-            status.value = '聊天记录已清空';
-            setTimeout(() => {
-                status.value = '';
-            }, 2000);
+            
+            try {
+                if (chatType.value === 'group' && currentGroupId.value) {
+                    // 清空群聊消息
+                    const response = await fetch(API_BASE + '/groups/' + currentGroupId.value + '/messages', {
+                        method: 'DELETE'
+                    });
+                    if (!response.ok) {
+                        throw new Error('清空失败');
+                    }
+                } else if (chatType.value === 'single' && currentCharacterId.value) {
+                    // 清空单聊消息
+                    const response = await fetch(API_BASE + '/messages/character/' + currentCharacterId.value + '?userId=' + currentUserId.value, {
+                        method: 'DELETE'
+                    });
+                    if (!response.ok) {
+                        throw new Error('清空失败');
+                    }
+                }
+                
+                messages.value = [];
+                showChatMenu.value = false;
+                status.value = '聊天记录已清空';
+                setTimeout(() => {
+                    status.value = '';
+                }, 2000);
+            } catch (error) {
+                console.error('清空聊天记录失败:', error);
+                alert('清空聊天记录失败: ' + error.message);
+            }
         };
 
         const clearChatWithConfirm = async () => {
             if (!confirm('确定要清空与该角色的聊天记录吗？此操作不可恢复。')) {
                 return;
             }
-            messages.value = [];
-            showMobileCharacterDetail.value = false;
-            status.value = '聊天记录已清空';
-            setTimeout(() => {
-                status.value = '';
-            }, 2000);
+            
+            try {
+                if (chatType.value === 'group' && currentGroupId.value) {
+                    // 清空群聊消息
+                    const response = await fetch(API_BASE + '/groups/' + currentGroupId.value + '/messages', {
+                        method: 'DELETE'
+                    });
+                    if (!response.ok) {
+                        throw new Error('清空失败');
+                    }
+                } else if (chatType.value === 'single' && currentCharacterId.value) {
+                    // 清空单聊消息
+                    const response = await fetch(API_BASE + '/messages/character/' + currentCharacterId.value + '?userId=' + currentUserId.value, {
+                        method: 'DELETE'
+                    });
+                    if (!response.ok) {
+                        throw new Error('清空失败');
+                    }
+                }
+                
+                messages.value = [];
+                showMobileCharacterDetail.value = false;
+                status.value = '聊天记录已清空';
+                setTimeout(() => {
+                    status.value = '';
+                }, 2000);
+            } catch (error) {
+                console.error('清空聊天记录失败:', error);
+                alert('清空聊天记录失败: ' + error.message);
+            }
         };
 
         const toggleChatMenu = () => {

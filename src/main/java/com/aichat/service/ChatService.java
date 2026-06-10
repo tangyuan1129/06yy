@@ -442,4 +442,19 @@ public class ChatService {
 		
 		return messageMapper.selectList(wrapper);
 	}
+
+	@Transactional
+	public void clearCharacterMessages(Long characterId, Long userId) {
+		logger.info("清空单聊消息: characterId={}, userId={}", characterId, userId);
+		LambdaQueryWrapper<Message> wrapper = new LambdaQueryWrapper<Message>()
+			.eq(Message::getCharacterId, characterId)
+			.isNotNull(Message::getConversationId);
+		
+		if (userId != null) {
+			wrapper.eq(Message::getUserId, userId);
+		}
+		
+		int count = messageMapper.delete(wrapper);
+		logger.info("已清空 {} 条单聊消息", count);
+	}
 }
