@@ -1036,6 +1036,19 @@ createApp({
             selectCharacter(character);
         };
 
+        const closeBaiEChat = (event) => {
+            // 关闭白厄聊天，取消当前选择
+            if (chatType.value === 'single' && currentCharacterId.value) {
+                const currentChar = characters.value.find(c => c.id === currentCharacterId.value);
+                if (currentChar && currentChar.name === '白厄') {
+                    chatType.value = null;
+                    currentCharacterId.value = null;
+                    messages.value = [];
+                    status.value = '';
+                }
+            }
+        };
+
         const removeMemberFromGroup = async (member) => {
             if (!confirm(`确定要将 ${member.name} 移出群聊吗？`)) {
                 return;
@@ -1204,6 +1217,7 @@ createApp({
             deleteGroup,
             showCharacterProfile,
             startPrivateChat,
+            closeBaiEChat,
             removeMemberFromGroup,
             removeMemberDirectly,
             toggleChatMenu,
