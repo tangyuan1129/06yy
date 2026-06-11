@@ -891,7 +891,7 @@
             }
 
             .chat-more-btn {
-                display: none !important;
+                display: flex !important;
             }
 
             .chat-more-menu {
@@ -2408,6 +2408,11 @@
                 background: #e0e0e0;
             }
 
+            /* 隐藏手机端群聊列表的解散按钮 */
+            .delete-group-item-btn {
+                display: none !important;
+            }
+
             /* 聊天信息按钮 */
             .chat-info-btn {
                 display: flex;
@@ -2570,6 +2575,262 @@
                 color: #333;
                 line-height: 1.8;
                 white-space: pre-wrap;
+            }
+
+            /* 手机端群聊信息面板 */
+            .mobile-info-panel {
+                position: absolute;
+                top: 0;
+                left: 0;
+                right: 0;
+                bottom: 0;
+                z-index: 300;
+                background: #f5f5f5;
+                display: flex;
+                flex-direction: column;
+                animation: slideInRight 0.3s ease;
+            }
+
+            .mobile-info-panel-header {
+                display: flex;
+                align-items: center;
+                padding: 12px 16px;
+                background: #fff;
+                border-bottom: 1px solid #e0e0e0;
+                min-height: 50px;
+            }
+
+            .mobile-info-panel-back {
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                width: 32px;
+                height: 32px;
+                border: none;
+                background: transparent;
+                cursor: pointer;
+                font-size: 20px;
+                color: #333;
+                border-radius: 50%;
+                transition: background 0.2s;
+                flex-shrink: 0;
+            }
+
+            .mobile-info-panel-back:hover {
+                background: #e0e0e0;
+            }
+
+            .mobile-info-panel-title {
+                font-size: 17px;
+                font-weight: 600;
+                color: #333;
+                flex: 1;
+                text-align: center;
+                margin-right: 32px;
+            }
+
+            .mobile-info-panel-content {
+                flex: 1;
+                overflow-y: auto;
+                padding: 0;
+            }
+
+            /* 群成员区域 */
+            .mobile-members-section {
+                background: #fff;
+                padding: 15px;
+                margin-bottom: 10px;
+            }
+
+            .mobile-section-title {
+                font-size: 14px;
+                color: #666;
+                margin-bottom: 12px;
+                font-weight: 500;
+            }
+
+            .mobile-group-members-grid {
+                display: grid;
+                grid-template-columns: repeat(4, 1fr);
+                gap: 15px 8px;
+            }
+
+            .mobile-member-item {
+                position: relative;
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+                justify-content: flex-start;
+            }
+
+            .mobile-member-avatar {
+                width: 48px;
+                height: 48px;
+                border-radius: 50%;
+                background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                color: white;
+                font-size: 18px;
+                font-weight: bold;
+                overflow: visible;
+                position: relative;
+                margin: 0 auto 6px;
+                cursor: pointer;
+                transition: transform 0.2s;
+            }
+
+            .mobile-member-avatar:hover {
+                transform: scale(1.1);
+            }
+
+            .mobile-member-avatar img {
+                width: 100%;
+                height: 100%;
+                object-fit: cover;
+                border-radius: 50%;
+                display: block;
+                object-position: center 20%;
+            }
+
+            .mobile-member-name {
+                font-size: 11px;
+                color: #333;
+                text-align: center;
+                white-space: nowrap;
+                overflow: hidden;
+                text-overflow: ellipsis;
+                max-width: 100%;
+            }
+
+            .remove-member-btn {
+                display: none;
+                position: absolute;
+                top: -5px;
+                right: -5px;
+                width: 20px;
+                height: 20px;
+                border-radius: 50%;
+                background: #ff4d4f;
+                color: white;
+                border: 2px solid white;
+                font-size: 16px;
+                line-height: 1;
+                cursor: pointer;
+                align-items: center;
+                justify-content: center;
+                transition: all 0.2s;
+                z-index: 10;
+                padding: 0;
+            }
+
+            .mobile-member-avatar:hover .remove-member-btn {
+                display: flex;
+            }
+
+            .remove-member-btn:hover {
+                background: #ff7875;
+                transform: scale(1.2);
+            }
+
+            /* 添加成员区域 */
+            .mobile-add-member-section {
+                background: #fff;
+                padding: 15px;
+                margin-bottom: 10px;
+            }
+
+            .mobile-add-member-input {
+                width: 100%;
+                padding: 10px 12px;
+                border: 1px solid #ddd;
+                border-radius: 8px;
+                font-size: 14px;
+                margin-bottom: 12px;
+                box-sizing: border-box;
+            }
+
+            .mobile-character-select-grid {
+                display: grid;
+                grid-template-columns: repeat(3, 1fr);
+                gap: 8px;
+                max-height: 200px;
+                overflow-y: auto;
+                margin-bottom: 12px;
+            }
+
+            .mobile-character-option {
+                padding: 8px 10px;
+                background: #f5f5f5;
+                border-radius: 6px;
+                text-align: center;
+                cursor: pointer;
+                transition: all 0.2s;
+                border: 2px solid transparent;
+            }
+
+            .mobile-character-option.selected {
+                background: #e6f7ff;
+                border-color: #1890ff;
+            }
+
+            .mobile-character-option-name {
+                font-size: 12px;
+                color: #333;
+                white-space: nowrap;
+                overflow: hidden;
+                text-overflow: ellipsis;
+            }
+
+            .mobile-add-btn {
+                width: 100%;
+                padding: 10px;
+                background: #1890ff;
+                color: white;
+                border: none;
+                border-radius: 8px;
+                font-size: 14px;
+                font-weight: 500;
+                cursor: pointer;
+                transition: all 0.2s;
+            }
+
+            .mobile-add-btn:disabled {
+                background: #ccc;
+                cursor: not-allowed;
+            }
+
+            .mobile-add-btn:not(:disabled):hover {
+                background: #096dd9;
+            }
+
+            /* 操作按钮区域 */
+            .mobile-info-panel-actions {
+                background: #fff;
+                padding: 15px;
+                display: flex;
+                gap: 10px;
+            }
+
+            .mobile-action-btn {
+                flex: 1;
+                padding: 12px;
+                border: none;
+                border-radius: 8px;
+                font-size: 14px;
+                font-weight: 500;
+                cursor: pointer;
+                transition: all 0.2s;
+            }
+
+            .mobile-action-btn.danger {
+                background: #ff4d4f;
+                color: white;
+            }
+
+            .mobile-action-btn.danger:hover {
+                background: #ff7875;
             }
         }
 
@@ -2761,7 +3022,8 @@
                         {{ chatType === 'single' ? currentCharacterName : currentGroupName }}
                     </div>
                     <button class="chat-info-btn" @click.stop="showMobileCharacterDetail = true" v-if="chatType === 'single' && isMobile">ℹ️</button>
-                    <button class="chat-more-btn" @click.stop="toggleChatMenu" v-if="chatType">⋮</button>
+                    <button class="chat-more-btn" @click.stop="showMobileInfoPanelFn" v-if="chatType === 'group' && isMobile">⋮</button>
+                    <button class="chat-more-btn" @click.stop="toggleChatMenu" v-if="chatType === 'single'">⋮</button>
                     <div class="chat-more-menu" v-if="showChatMenu">
                         <div class="chat-menu-item danger" @click.stop="clearChat">清空聊天</div>
                     </div>
@@ -2861,6 +3123,57 @@
                         <button class="add-member-btn" @click="addMemberToGroup" :disabled="!selectedMemberToAdd" style="margin-top: 10px; width: 100%;">
                             添加
                         </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 手机端群聊信息面板 -->
+            <div class="mobile-info-panel" v-if="chatType === 'group' && isMobile && showMobileInfoPanel" @click.self="showMobileInfoPanel = false">
+                <div class="mobile-info-panel-header">
+                    <button class="mobile-info-panel-back" @click="showMobileInfoPanel = false">←</button>
+                    <div class="mobile-info-panel-title">群成员</div>
+                </div>
+                <div class="mobile-info-panel-content">
+                    <!-- 群成员列表 -->
+                    <div class="mobile-members-section">
+                        <div class="mobile-section-title">群成员（{{ currentGroupMembers.length }}人）</div>
+                        <div class="mobile-group-members-grid">
+                            <div v-for="member in currentGroupMembers" :key="member.id" class="mobile-member-item">
+                                <div class="mobile-member-avatar" @click="showCharacterProfile(member)">
+                                    <img v-if="member.avatarUrl" :src="member.avatarUrl" :alt="member.name">
+                                    <span v-else>{{ member.name.charAt(0) }}</span>
+                                    <button class="remove-member-btn" @click.stop="removeMemberDirectly(member)" title="移除成员">×</button>
+                                </div>
+                                <div class="mobile-member-name">{{ member.name }}</div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- 添加成员 -->
+                    <div class="mobile-add-member-section">
+                        <div class="mobile-section-title">添加成员</div>
+                        <input type="text" class="mobile-add-member-input" v-model="searchAddMembers" placeholder="搜索角色...">
+                        <div class="mobile-character-select-grid">
+                            <div v-if="filteredAddMembers.length === 0" style="padding: 10px; text-align: center; color: #888; grid-column: 1/-1; font-size: 12px;">
+                                没有找到匹配的角色
+                            </div>
+                            <div class="mobile-character-option" 
+                                 v-for="char in filteredAddMembers" 
+                                 :key="char.id"
+                                 :class="{ selected: selectedMemberToAdd === char.id }"
+                                 @click="selectedMemberToAdd = char.id">
+                                <div class="mobile-character-option-name">{{ char.name }}</div>
+                            </div>
+                        </div>
+                        <button class="mobile-add-btn" @click="addMemberToGroup" :disabled="!selectedMemberToAdd">
+                            添加
+                        </button>
+                    </div>
+
+                    <!-- 操作按钮 -->
+                    <div class="mobile-info-panel-actions">
+                        <button class="mobile-action-btn danger" @click="clearChatWithConfirm">清空聊天</button>
+                        <button class="mobile-action-btn danger" @click="dismissGroupMobile">解散群聊</button>
                     </div>
                 </div>
             </div>

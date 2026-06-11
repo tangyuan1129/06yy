@@ -59,6 +59,7 @@ createApp({
         const isMobile = ref(false);
         const sidebarVisible = ref(true);
         const showMobileCharacterDetail = ref(false);
+        const showMobileInfoPanel = ref(false);
 
         // 获取角色头像URL的辅助函数
         const getCharacterAvatar = (characterId) => {
@@ -314,6 +315,43 @@ createApp({
         // 关闭移动端角色详情
         const closeMobileCharacterDetail = () => {
             showMobileCharacterDetail.value = false;
+        };
+
+        // 显示移动端群聊信息面板
+        const showMobileInfoPanelFn = () => {
+            showMobileInfoPanel.value = true;
+        };
+
+        // 移动端解散群聊
+        const dismissGroupMobile = async () => {
+            if (!confirm('确定要解散这个群聊吗？这将删除所有聊天记录！')) {
+                return;
+            }
+
+            try {
+                console.log('正在解散群聊:', currentGroupId.value);
+                const response = await fetch(API_BASE + '/groups/' + currentGroupId.value, {
+                    method: 'DELETE'
+                });
+
+                if (!response.ok) {
+                    throw new Error('HTTP错误: ' + response.status);
+                }
+
+                groups.value = groups.value.filter(g => g.id !== currentGroupId.value);
+                chatType.value = null;
+                currentGroupId.value = null;
+                currentGroupMembers.value = [];
+                messages.value = [];
+                showMobileInfoPanel.value = false;
+                status.value = '群聊已解散';
+                setTimeout(() => {
+                    status.value = '';
+                }, 2000);
+            } catch (error) {
+                console.error('解散群聊失败:', error);
+                alert('解散群聊失败: ' + error.message);
+            }
         };
 
         // 加载群聊会话
@@ -1233,7 +1271,10 @@ createApp({
             sidebarVisible,
             showSidebar,
             showMobileCharacterDetail,
-            closeMobileCharacterDetail
+            closeMobileCharacterDetail,
+            showMobileInfoPanel,
+            showMobileInfoPanelFn,
+            dismissGroupMobile
         };
     }
 }).mount('#app');
