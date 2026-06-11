@@ -344,6 +344,7 @@ createApp({
                 currentGroupMembers.value = [];
                 messages.value = [];
                 showMobileInfoPanel.value = false;
+                sidebarVisible.value = true;
                 status.value = '群聊已解散';
                 setTimeout(() => {
                     status.value = '';
