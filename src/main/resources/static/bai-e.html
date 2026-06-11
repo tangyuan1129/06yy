@@ -3023,7 +3023,7 @@
                     </div>
                     <button class="chat-info-btn" @click.stop="showMobileCharacterDetail = true" v-if="chatType === 'single' && isMobile">ℹ️</button>
                     <button class="chat-more-btn" @click.stop="showMobileInfoPanelFn" v-if="chatType === 'group' && isMobile">⋮</button>
-                    <button class="chat-more-btn" @click.stop="toggleChatMenu" v-if="chatType === 'single'">⋮</button>
+                    <button class="chat-more-btn" @click.stop="toggleChatMenu" v-if="chatType === 'single' && !isMobile">⋮</button>
                     <div class="chat-more-menu" v-if="showChatMenu">
                         <div class="chat-menu-item danger" @click.stop="clearChat">清空聊天</div>
                     </div>
